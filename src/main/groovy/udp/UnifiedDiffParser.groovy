@@ -7,21 +7,20 @@ class UnifiedDiffParser {
     private List<UnifiedDiff> unifiedDiffs
     private String rawUnifiedDiff;
 
-    UnifiedDiffParser(String unifiedDiff){
+    UnifiedDiffParser(String unifiedDiff) {
         this.rawUnifiedDiff = unifiedDiff
         this.unifiedDiffs = new ArrayList<UnifiedDiff>()
     }
 
     public void parse() {
-        for (String diff: getRawDiffs()) {
-            unifiedDiffs.add(UnifiedDiff.fromRawDiff(diff))
+        for (String diff : getRawDiffs()) {
+            unifiedDiffs.add(fromRawDiff(diff))
         }
     }
 
     ArrayList<String> getRawDiffs() {
         ArrayList<String> rawDiffs = new ArrayList<String>()
         String diffSplitExpression = '\ndiff --git'
-        // TODO: Not entirely sure why I need the - 1
         int offset = diffSplitExpression.length() - 1
         Pattern p = Pattern.compile(diffSplitExpression)
         Matcher m = p.matcher(rawUnifiedDiff)
@@ -31,7 +30,19 @@ class UnifiedDiffParser {
             pos = m.end() - offset
         }
 
+        // One at the end we still have to add
+        rawDiffs.add(rawUnifiedDiff.substring(pos))
+
         return rawDiffs
+    }
+
+    static UnifiedDiff fromRawDiff(String rawDiff) {
+        IndividualDiffParser individualDiffParser = new IndividualDiffParser(rawDiff)
+        return individualDiffParser.parse()
+    }
+
+    public List<UnifiedDiff> getUnifiedDiffs() {
+        return unifiedDiffs;
     }
 }
 

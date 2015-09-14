@@ -1,0 +1,25 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..d490e8e
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,19 @@
++.*swp
++.coverage
++.ropeproject
++
++src/tasks.dat
++
++src/examples/taskfile
++src/examples/keyfile
++src/examples/taskdb
++src/examples/tasks.dat
++src/examples/*.pyc
++
++src/task/.ropeproject/
++src/task/*.pyc
++
++src/test/.ropeproject/
++src/test/taskdb
++src/test/tasks.dat
++src/test/*.pyc
