@@ -12,6 +12,9 @@ class IndividualDiffParser {
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
     }
 
+    // TODO: Inconsistency between added/deleted text and binary files:
+    // TODO:        Text: To/From file respectively is '/dev/null' along with file being added/deleted
+    // TODO:        Binary: To/From file respectively are both the same
     UnifiedDiff parse() {
         unifiedDiff.setDiffHeader(extractDiffHeader(unifiedDiff.getRawDiff()))
         for (String rawDiffLine : unifiedDiff.getDiffHeader().readLines()) {
@@ -27,9 +30,10 @@ class IndividualDiffParser {
                 unifiedDiff.setToFile(extractToFile(rawDiffLine))
             } else if (isBinaryFileLine(rawDiffLine)) {
                 unifiedDiff.setIsBinary(true)
-                // TODO: Not convinced these binary file name patters are 100% flawless
                 unifiedDiff.setFromFile(extractFromFileFromBinaryLine(rawDiffLine))
                 unifiedDiff.setToFile(extractToFileFromBinaryLine(rawDiffLine))
+            } else if (isGitBinaryFileLine(rawDiffLine)) {
+                unifiedDiff.setIsBinary(true)
             }
         }
         // TODO: Get the to and from file names from the first line as a last ditch effort
@@ -95,6 +99,10 @@ class IndividualDiffParser {
         return m.group(2)
     }
 
+    static boolean isGitBinaryFileLine(String diffLine) {
+        return diffLine.matches(LineExpression.IS_GIT_BINARY)
+    }
+
     static boolean isBinaryFileLine(String diffLine) {
         return diffLine.matches(LineExpression.IS_BINARY)
     }
@@ -141,7 +149,9 @@ class IndividualDiffParser {
         static final Pattern IS_DELETED_FILE_MODE = Pattern.compile("deleted file mode (.*)")
         static final Pattern IS_FROM_FILE = Pattern.compile("--- (a/)*(.*)")
         static final Pattern IS_TO_FILE = Pattern.compile("\\+\\+\\+ (b/)*(.*)")
+        // TODO: Not convinced these binary file name patters are 100% flawless
         static final Pattern IS_BINARY = Pattern.compile("Binary files (a/)*(.*) and (b/)*(.*) differ")
+        static final Pattern IS_GIT_BINARY = Pattern.compile("GIT binary patch")
         static final Pattern IS_FIRST_LINE = Pattern.compile("diff --git a/(.*) b/(.*)")
     }
 }
