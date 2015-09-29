@@ -68,6 +68,90 @@ class UnifiedDiffParserTest extends Specification {
         !unifiedDiff.getDiffBody().isEmpty()
     }
 
+    def "Diff of a file with changed permissions should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('mode_change.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiffs.size() == 1
+        unifiedDiff.getFromFile().equals('a')
+        unifiedDiff.getToFile().equals('a')
+        unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
+        unifiedDiff.getMode().equals('100755')
+        unifiedDiff.getDiffBody().isEmpty()
+    }
+
+    def "Diff of a renamed file with a similarity index should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('rename_similarity_index.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiffs.size() == 1
+        unifiedDiff.getFromFile().equals('a')
+        unifiedDiff.getToFile().equals('b')
+        unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Renamed)
+        unifiedDiff.getSimilarityIndex().equals('100%')
+        unifiedDiff.getDiffBody().isEmpty()
+    }
+
+    def "Diff of a copied file with a similarity index should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('copy_similarity_index.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiffs.size() == 1
+        unifiedDiff.getFromFile().equals('a')
+        unifiedDiff.getToFile().equals('b')
+        unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Copied)
+        unifiedDiff.getSimilarityIndex().equals('100%')
+        unifiedDiff.getDiffBody().isEmpty()
+    }
+
+    def "Diff of a modified file should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('modified.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiffs.size() == 1
+        unifiedDiff.getFromFile().equals('a')
+        unifiedDiff.getToFile().equals('a')
+        unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
+        unifiedDiff.getChecksumBefore().equals("5c31be7")
+        unifiedDiff.getChecksumAfter().equals("45cfaf4")
+        unifiedDiff.getMode().equals("100644")
+        !unifiedDiff.getDiffBody().isEmpty()
+    }
+
+    def "Diff of a modified and mode changed file should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('modified_mode_change.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiffs.size() == 1
+        unifiedDiff.getFromFile().equals('a')
+        unifiedDiff.getToFile().equals('a')
+        unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
+        unifiedDiff.getChecksumBefore().equals("5c31be7")
+        unifiedDiff.getChecksumAfter().equals("38e4da5")
+        unifiedDiff.getMode().equals("100755")
+        !unifiedDiff.getDiffBody().isEmpty()
+    }
+
     private static UnifiedDiffParser getUdpFromResource(String resourceName) {
         return new UnifiedDiffParser(
                 getTestResourceText(resourceName)

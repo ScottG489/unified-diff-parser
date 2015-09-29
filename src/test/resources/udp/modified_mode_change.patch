@@ -1,0 +1,21 @@
+diff --git a/a b/a
+old mode 100644
+new mode 100755
+index 5c31be7..38e4da5
+--- a/a
++++ b/a
+@@ -1,10 +1,11 @@
+ asdf
+ asdf
+ asfd
+-fasd
+-afsd
++asdf
++fas
++afd
+ asfdfad
+-sfad
+ sfa
++asdf
+ sd
+ afs

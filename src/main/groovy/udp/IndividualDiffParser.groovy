@@ -9,12 +9,16 @@ class IndividualDiffParser {
     IndividualDiffParser(String rawDiff) {
         unifiedDiff = new UnifiedDiff(rawDiff)
         // TODO: Initialize as modified, will be overridden if otherwise.
+        // TODO: Do we want to consider renames, mode changes, etc. as modified?
+        // Solution to this is likely different diff types (classes) or at least
+        // add rename/copy file status
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
     }
 
     // TODO: Inconsistency between added/deleted text and binary files:
     // TODO:        Text: To/From file respectively is '/dev/null' along with file being added/deleted
     // TODO:        Binary: To/From file respectively are both the same
+    // TODO: This should be refactored using 'states' if only for readability
     UnifiedDiff parse() {
         unifiedDiff.setDiffHeader(extractDiffHeader(unifiedDiff.getRawDiff()))
         Iterator<String> lineIter = unifiedDiff.getDiffHeader().readLines().iterator()
@@ -31,22 +35,32 @@ class IndividualDiffParser {
                 unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Removed)
                 unifiedDiff.setMode(extractDeletedFileMode(extendedHeaderLine))
             } else if (isOldModeLine(extendedHeaderLine)) {
-                if (isNewModeLine(lineIter.next())) {
-
+                String newModeLine = lineIter.next()
+                if (isNewModeLine(newModeLine)) {
+                    // TODO: Handle old mode somehow
+//                    extractOldMode(extendedHeaderLine)
+                    unifiedDiff.setMode(extractNewMode(newModeLine))
                 }  else {
                     // malformed. next line needs to be new mode line
                 }
             } else if (isSimilarityIndexLine(extendedHeaderLine)) {
+                unifiedDiff.setSimilarityIndex(extractSimilarityIndex(extendedHeaderLine))
                 String copyOrRenameFromLine = lineIter.next()
                 if (isCopyFromLine(copyOrRenameFromLine)) {
-                    if (isCopyToLine(lineIter.next())) {
-
+                    String copyToLine = lineIter.next()
+                    if (isCopyToLine(copyToLine)) {
+                        unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Copied)
+                        unifiedDiff.setFromFile(extractCopyFrom(copyOrRenameFromLine))
+                        unifiedDiff.setToFile(extractCopyTo(copyToLine))
                     } else {
                         // malformed. next line needs to be copy to line
                     }
                 } else if (isRenameFromLine(copyOrRenameFromLine)) {
-                    if (isRenameToLine(lineIter.next())) {
-
+                    String renameToLine = lineIter.next()
+                    if (isRenameToLine(renameToLine)) {
+                        unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Renamed)
+                        unifiedDiff.setFromFile(extractRenameFrom(copyOrRenameFromLine))
+                        unifiedDiff.setToFile(extractRenameTo(renameToLine))
                     } else {
                         // malformed. next line needs to be rename to line
                     }
@@ -54,21 +68,34 @@ class IndividualDiffParser {
                     // malformed, following a similarity index line needs to be copy from or rename from line
                 }
             } else if (isDissimilarityIndexLine(extendedHeaderLine)) {
-
-            }
-            if (isIndexLine(lineIter.next())) {
+                // TODO: Handle
+            } else if (isIndexLine(extendedHeaderLine)) {
                 // handle index line here then...
-
-                if (!lineIter.hasNext()) {
-                    // Empty file so we're done parsing header
-                    break
-                }
+                unifiedDiff.setChecksumBefore(extractChecksumBefore(extendedHeaderLine))
+                unifiedDiff.setChecksumAfter(extractChecksumAfter(extendedHeaderLine))
+                // XXX: Only try to get the mode here if it hasn't changed
+                // Will a index line as the second line always be a modified file?
+                unifiedDiff.setMode(extractMode(extendedHeaderLine))
             } else {
-                // malformed? i believe there's always a index line
-                // I think it's required but git code suggests it's possible for it not to be.
-                // Need to investigate git source code further
-                // If not then this and below section needs to be refactored accordingly.
+                // Malformed? Should have been one of the above
             }
+            if (!lineIter.hasNext()) {
+                // End of header
+                break
+            }
+            String indexLine = lineIter.next()
+            if (isIndexLine(indexLine)) {
+                // handle index line here then...
+                unifiedDiff.setChecksumBefore(extractChecksumBefore(indexLine))
+                unifiedDiff.setChecksumAfter(extractChecksumAfter(indexLine))
+                // TODO: No mode line as a index in this position indicates a
+                // TODO:    state other than modified
+            }
+            if (!lineIter.hasNext()) {
+                // No to/from file lines so break
+                break
+            }
+
             String postHeaderLine = lineIter.next()
             if (isFromFileLine(postHeaderLine)) {
                 unifiedDiff.setFromFile(extractFromFile(postHeaderLine))
@@ -183,6 +210,46 @@ class IndividualDiffParser {
         return m.group(2)
     }
 
+    private static String extractChecksumBefore(String indexLine) {
+        extractDataFromHeaderLine(indexLine, LineExpression.INDEX, 1)
+    }
+
+    private static String extractChecksumAfter(String indexLine) {
+        extractDataFromHeaderLine(indexLine, LineExpression.INDEX, 2)
+    }
+
+    private static String extractMode(String indexLine) {
+        extractDataFromHeaderLine(indexLine, LineExpression.INDEX, 3)
+    }
+
+    private static String extractSimilarityIndex(String similarityIndexLine) {
+        extractDataFromHeaderLine(similarityIndexLine, LineExpression.SIMILARITY_INDEX, 1)
+    }
+
+    private static String extractCopyFrom(String copyFromLine) {
+        extractDataFromHeaderLine(copyFromLine, LineExpression.COPY_FROM, 1)
+    }
+
+    private static String extractCopyTo(String copyToLine) {
+        extractDataFromHeaderLine(copyToLine, LineExpression.COPY_TO, 1)
+    }
+
+    private static String extractRenameFrom(String renameFromLine) {
+        extractDataFromHeaderLine(renameFromLine, LineExpression.RENAME_FROM, 1)
+    }
+
+    private static String extractRenameTo(String renameToLine) {
+        extractDataFromHeaderLine(renameToLine, LineExpression.RENAME_TO, 1)
+    }
+
+    private static String extractOldMode(String oldModeLine) {
+        extractDataFromHeaderLine(oldModeLine, LineExpression.OLD_MODE, 1)
+    }
+
+    private static String extractNewMode(String newModeLine) {
+        extractDataFromHeaderLine(newModeLine, LineExpression.NEW_MODE, 1)
+    }
+
     private static String extractNewFileMode(String newFileModeLine) {
         extractDataFromHeaderLine(newFileModeLine, LineExpression.NEW_FILE_MODE, 1)
     }
@@ -251,16 +318,19 @@ class IndividualDiffParser {
         static final Pattern RENAME_TO = Pattern.compile("rename to (.*)")
         // Not shown with copy or rename
         static final Pattern DISSIMILARITY_INDEX = Pattern.compile("dissimilarity index (.*)")
-        static final Pattern INDEX = Pattern.compile("index (.*)\\.\\.(.*) *(.*)")
-        // TODO: Not convinced these binary file name patters are 100% flawless
-        static final Pattern BINARY = Pattern.compile("Binary files (a/)*(.*) and (b/)*(.*) differ")
-        // TODO: This may be mercurial specific?
-        static final Pattern GIT_BINARY = Pattern.compile("GIT binary patch")
         /*
         * "The index line includes the SHA-1 checksum before and after the
         * change. The <mode> is included if the file mode does not change;
         * otherwise, separate lines indicate the old and the new mode."
         */
+        // In other words the last group will be empty if the mode changed.
+        // TODO: Are there alwawys 2 .'s here? Thought I saw something about them being
+        // TODO:    used for padding which means that could change.
+        static final Pattern INDEX = Pattern.compile("index (.*)\\.\\.([^ ]*) *(.*)")
+        // TODO: Not convinced these binary file name patters are 100% flawless
+        static final Pattern BINARY = Pattern.compile("Binary files (a/)*(.*) and (b/)*(.*) differ")
+        // TODO: This may be mercurial specific?
+        static final Pattern GIT_BINARY = Pattern.compile("GIT binary patch")
         static final Pattern FROM_FILE = Pattern.compile("--- (a/)*(.*)")
         static final Pattern TO_FILE = Pattern.compile("\\+\\+\\+ (b/)*(.*)")
     }
