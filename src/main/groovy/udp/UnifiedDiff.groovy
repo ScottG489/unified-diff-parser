@@ -9,6 +9,9 @@ class UnifiedDiff {
     private boolean isBinary
     private String diffBody
     private String diffHeader
+    private String similarityIndex
+    private String checksumBefore
+    private String checksumAfter
 
     UnifiedDiff(String rawDiff) {
         this.rawDiff = rawDiff
@@ -50,12 +53,36 @@ class UnifiedDiff {
         this.fromFile = fromFile
     }
 
+    void setSimilarityIndex(String similarityIndex) {
+        this.similarityIndex = similarityIndex
+    }
+
+    String getSimilarityIndex() {
+        return similarityIndex
+    }
+
     boolean isBinary() {
         return isBinary
     }
 
     void setIsBinary(boolean isBinary) {
         this.isBinary = isBinary
+    }
+
+    String getChecksumBefore() {
+        return checksumBefore
+    }
+
+    void setChecksumBefore(String checksumBefore) {
+        this.checksumBefore = checksumBefore
+    }
+
+    String getChecksumAfter() {
+        return checksumAfter
+    }
+
+    void setChecksumAfter(String checksumAfter) {
+        this.checksumAfter = checksumAfter
     }
 
     String getDiffBody() {
@@ -82,8 +109,14 @@ class UnifiedDiff {
     boolean isRemovedFile() {
         return getFileStatus().equals(FileStatus.Removed)
     }
+    boolean isRenamed() {
+        return getFileStatus().equals(FileStatus.Renamed)
+    }
+    boolean isCopied() {
+        return getFileStatus().equals(FileStatus.Copied)
+    }
 
     enum FileStatus {
-        Added, Modified, Removed
+        Added, Modified, Removed, Copied, Renamed
     }
 }
