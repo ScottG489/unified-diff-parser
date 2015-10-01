@@ -16,6 +16,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('/dev/null')
         unifiedDiff.getToFile().equals('.gitignore')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
+        unifiedDiff.isAddedFile()
         unifiedDiff.getMode().equals('100644')
         !unifiedDiff.getDiffBody().isEmpty()
     }
@@ -32,6 +33,8 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('/dev/null')
         unifiedDiff.getToFile().equals('doc/doxygen/html/bc_s.png')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
+        unifiedDiff.isAddedFile()
+        unifiedDiff.isBinary()
         unifiedDiff.getMode().equals('100644')
         unifiedDiff.getDiffBody().isEmpty()
     }
@@ -48,6 +51,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('doc/sphinx/keyfile')
         unifiedDiff.getToFile().equals('doc/sphinx/keyfile')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
+        unifiedDiff.isAddedFile()
         unifiedDiff.getMode().equals('100644')
         unifiedDiff.getDiffBody().isEmpty()
     }
@@ -64,6 +68,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('task.py')
         unifiedDiff.getToFile().equals('/dev/null')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Removed)
+        unifiedDiff.isRemovedFile()
         unifiedDiff.getMode().equals('100644')
         !unifiedDiff.getDiffBody().isEmpty()
     }
@@ -80,6 +85,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('a')
         unifiedDiff.getToFile().equals('a')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
+        unifiedDiff.isModifiedFile()
         unifiedDiff.getMode().equals('100755')
         unifiedDiff.getDiffBody().isEmpty()
     }
@@ -96,6 +102,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('a')
         unifiedDiff.getToFile().equals('b')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Renamed)
+        unifiedDiff.isRenamed()
         unifiedDiff.getSimilarityIndex().equals('100%')
         unifiedDiff.getDiffBody().isEmpty()
     }
@@ -112,6 +119,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('a')
         unifiedDiff.getToFile().equals('b')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Copied)
+        unifiedDiff.isCopied()
         unifiedDiff.getSimilarityIndex().equals('100%')
         unifiedDiff.getDiffBody().isEmpty()
     }
@@ -128,6 +136,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('a')
         unifiedDiff.getToFile().equals('a')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
+        unifiedDiff.isModifiedFile()
         unifiedDiff.getChecksumBefore().equals("5c31be7")
         unifiedDiff.getChecksumAfter().equals("45cfaf4")
         unifiedDiff.getMode().equals("100644")
@@ -146,6 +155,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFromFile().equals('a')
         unifiedDiff.getToFile().equals('a')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
+        unifiedDiff.isModifiedFile()
         unifiedDiff.getChecksumBefore().equals("5c31be7")
         unifiedDiff.getChecksumAfter().equals("38e4da5")
         unifiedDiff.getMode().equals("100755")
