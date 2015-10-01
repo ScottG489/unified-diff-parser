@@ -1,0 +1,62 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..d490e8e
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,19 @@
++.*swp
++.coverage
++.ropeproject
++
++src/tasks.dat
++
++src/examples/taskfile
++src/examples/keyfile
++src/examples/taskdb
++src/examples/tasks.dat
++src/examples/*.pyc
++
++src/task/.ropeproject/
++src/task/*.pyc
++
++src/test/.ropeproject/
++src/test/taskdb
++src/test/tasks.dat
++src/test/*.pyc
+diff --git a/task.py b/task.py
+deleted file mode 100644
+index 70e053b..0000000
+--- a/task.py
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import textwrap
+-class Task():
+-	def __init__(self, title='', notes = '', priority = int(), tags = []):
+-		self.title = title
+-		self.notes = notes
+-		self.priority = priority
+-		self.tags = tags
+-
+-	def __str__(self):
+-		return textwrap.dedent('''\
+-			Title: %(title)s
+-			Notes: %(notes)s''') % {
+-				'title': self.title,
+-			'notes': self.notes
+-		}
+diff --git a/a b/a
+index 5c31be7..45cfaf4 100644
+--- a/a
++++ b/a
+@@ -1,9 +1,9 @@
+ asdf
+ asdf
+-asfd
+ fasd
+ afsd
+-asfdfad
++asdf
++fdfad
+ sfad
+ sfa
+ sd

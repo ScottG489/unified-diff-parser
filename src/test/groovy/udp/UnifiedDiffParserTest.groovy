@@ -162,6 +162,34 @@ class UnifiedDiffParserTest extends Specification {
         !unifiedDiff.getDiffBody().isEmpty()
     }
 
+    def "Diff with GIT binary patch line should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('added_binary_literal.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiff.getFromFile().equals('bar')
+        unifiedDiff.getToFile().equals('bar')
+        unifiedDiff.isBinary()
+        unifiedDiff.getMode().equals('100755')
+        unifiedDiff.getChecksumBefore().equals('78981922613b2afb6025042ff6bd878ac1994e85')
+        unifiedDiff.getChecksumAfter().equals('0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17')
+        unifiedDiff.getDiffBody().isEmpty()
+    }
+
+    def "Diff with 3 files in it should have a size of 3"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('multi.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+
+        then:
+        unifiedDiffs.size() == 3
+    }
+
+
     private static UnifiedDiffParser getUdpFromResource(String resourceName) {
         return new UnifiedDiffParser(
                 getTestResourceText(resourceName)
