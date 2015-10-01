@@ -12,6 +12,8 @@ class IndividualDiffParser {
         // TODO: Do we want to consider renames, mode changes, etc. as modified?
         // Solution to this is likely different diff types (classes) or at least
         // add rename/copy file status
+        // TODO: This will likely be set incorrectly for binary files since we don't currently
+        // TODO:    have detection on whether a binary file is being added, modified, removed, etc
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
     }
 
@@ -19,6 +21,10 @@ class IndividualDiffParser {
     // TODO:        Text: To/From file respectively is '/dev/null' along with file being added/deleted
     // TODO:        Binary: To/From file respectively are both the same
     // TODO: This should be refactored using 'states' if only for readability
+    // TODO: Should 'binary' 'header' lines be considered part of the header? Or are they
+    // TODO:    really part of the body? Seems like they are more part of the body
+    // TODO:    but since we want to know if the file is binary we parse them as though they are
+    // TODO:    part of the header.
     UnifiedDiff parse() {
         unifiedDiff.setDiffHeader(extractDiffHeader(unifiedDiff.getRawDiff()))
         Iterator<String> lineIter = unifiedDiff.getDiffHeader().readLines().iterator()
@@ -90,6 +96,8 @@ class IndividualDiffParser {
                 unifiedDiff.setChecksumAfter(extractChecksumAfter(indexLine))
                 // TODO: No mode line as a index in this position indicates a
                 // TODO:    state other than modified
+            } else if (isGitBinaryFileLine(indexLine)) {
+                unifiedDiff.setIsBinary(true)
             }
             if (!lineIter.hasNext()) {
                 // No to/from file lines so break
@@ -109,8 +117,6 @@ class IndividualDiffParser {
                 unifiedDiff.setIsBinary(true)
                 unifiedDiff.setFromFile(extractFromFileFromBinaryLine(postHeaderLine))
                 unifiedDiff.setToFile(extractToFileFromBinaryLine(postHeaderLine))
-            } else if (isGitBinaryFileLine(postHeaderLine)) {
-                unifiedDiff.setIsBinary(true)
             }
         }
         // TODO: Get the to and from file names from the first line as a last ditch effort
@@ -329,7 +335,6 @@ class IndividualDiffParser {
         static final Pattern INDEX = Pattern.compile("index (.*)\\.\\.([^ ]*) *(.*)")
         // TODO: Not convinced these binary file name patters are 100% flawless
         static final Pattern BINARY = Pattern.compile("Binary files (a/)*(.*) and (b/)*(.*) differ")
-        // TODO: This may be mercurial specific?
         static final Pattern GIT_BINARY = Pattern.compile("GIT binary patch")
         static final Pattern FROM_FILE = Pattern.compile("--- (a/)*(.*)")
         static final Pattern TO_FILE = Pattern.compile("\\+\\+\\+ (b/)*(.*)")
