@@ -10,6 +10,7 @@ class UnifiedDiff {
     private String diffBody
     private String diffHeader
     private String similarityIndex
+    private String dissimilarityIndex
     private String checksumBefore
     private String checksumAfter
 
@@ -59,6 +60,14 @@ class UnifiedDiff {
 
     String getSimilarityIndex() {
         return similarityIndex
+    }
+
+    void setDissimilarityIndex(String dissimilarityIndex) {
+        this.dissimilarityIndex = dissimilarityIndex
+    }
+
+    String getDisimilarityIndex() {
+        return dissimilarityIndex
     }
 
     boolean isBinary() {
