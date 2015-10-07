@@ -1,5 +1,6 @@
 package udp
 
+// TODO: Add newMode and oldMode fields that are separate from mode and used appropriately
 class UnifiedDiff {
     private String rawDiff
     private String fromFile

@@ -12,16 +12,16 @@ class IndividualDiffParser {
         // TODO: Do we want to consider renames, mode changes, etc. as modified?
         // Solution to this is likely different diff types (classes) or at least
         // add rename/copy file status
-        // TODO: This will likely be set incorrectly for binary files since we don't currently
-        // TODO:    have detection on whether a binary file is being added, modified, removed, etc
+        // TODO: This will likely be set incorrectly for certain binary file statuses
+        // TODO:    since we don't currently have detection on all of them for binaries
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
     }
 
     UnifiedDiff parseHeader() {
         Iterator<String> lineIter = unifiedDiff.getDiffHeader().readLines().iterator()
-        // TODO: This likely doesn't need to loop since we step through each line until we
-        // TODO:    get to the end of the header
         if (lineIter.hasNext()) {
+            // TODO: Pull this up a level outside this function? Especially since
+            // TODO:    we might need to use it later for parsing file names
             String diffGitLine = lineIter.next()
             if (!isDiffGitLine(diffGitLine)) {
                 // First line isn't git diff line. Malformed.
@@ -72,7 +72,7 @@ class IndividualDiffParser {
                 // handle index line here then...
                 unifiedDiff.setChecksumBefore(extractChecksumBefore(extendedHeaderLine))
                 unifiedDiff.setChecksumAfter(extractChecksumAfter(extendedHeaderLine))
-                // XXX: Only try to get the mode here if it hasn't changed
+                // TODO: Only try to get the mode here if it hasn't changed
                 // Will a index line as the second line always be a modified file?
                 unifiedDiff.setMode(extractMode(extendedHeaderLine))
             } else {
@@ -342,7 +342,7 @@ class IndividualDiffParser {
         * otherwise, separate lines indicate the old and the new mode."
         */
         // In other words the last group will be empty if the mode changed.
-        // TODO: Are there alwawys 2 .'s here? Thought I saw something about them being
+        // TODO: Are there always 2 .'s here? Thought I saw something about them being
         // TODO:    used for padding which means that could change.
         static final Pattern INDEX = Pattern.compile("index (.*)\\.\\.([^ ]*) *(.*)")
         // TODO: Not convinced these binary file name patters are 100% flawless
