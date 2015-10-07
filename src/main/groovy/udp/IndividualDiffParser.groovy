@@ -80,7 +80,7 @@ class IndividualDiffParser {
             }
             if (!lineIter.hasNext()) {
                 // End of header
-                return
+                return unifiedDiff
             }
             String indexLine = lineIter.next()
             if (isIndexLine(indexLine)) {
@@ -94,7 +94,7 @@ class IndividualDiffParser {
             }
             if (!lineIter.hasNext()) {
                 // No to/from file lines so break
-                return
+                return unifiedDiff
             }
 
             String postHeaderLine = lineIter.next()
