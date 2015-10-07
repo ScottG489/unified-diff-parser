@@ -1,5 +1,6 @@
 package udp
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 // TODO: Use a template diff instead of static files?
@@ -176,6 +177,28 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getMode().equals('100755')
         unifiedDiff.getChecksumBefore().equals('78981922613b2afb6025042ff6bd878ac1994e85')
         unifiedDiff.getChecksumAfter().equals('0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17')
+        unifiedDiff.getDiffBody().isEmpty()
+    }
+
+    // TODO: State of new mode to similarity index isn't expected with current parser. Needs to be fixed
+    @Ignore
+    def "Diff of a renamed binary file that was modified and had it's mode changed should have appropriate attributes"() {
+        when:
+        UnifiedDiffParser udp = getUdpFromResource('rename_binary_literal_mode_change.patch')
+        udp.parse()
+        List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
+        UnifiedDiff unifiedDiff = unifiedDiffs.first()
+
+        then:
+        unifiedDiff.getFromFile().equals('foo')
+        unifiedDiff.getToFile().equals('boo')
+        unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Renamed)
+        unifiedDiff.isRenamed()
+        unifiedDiff.isBinary()
+        unifiedDiff.getMode().equals('100755')
+        unifiedDiff.getSimilarityIndex().equals('99%')
+        unifiedDiff.getChecksumBefore().equals('b8bd059ec9968339eddf762411b39ece50f78e3e')
+        unifiedDiff.getChecksumAfter().equals('ba300ede17a9e96ff8bbac6fb9250e18a9d69bea')
         unifiedDiff.getDiffBody().isEmpty()
     }
 
