@@ -156,7 +156,7 @@ class IndividualDiffParser {
         ParserNode newModeNode = new GenericParserNode(
                 "new mode (.*)",
                 new NewModeStrategy(),
-                [indexNode].toSet()
+                [indexNode, similarityIndexNode].toSet()
         )
         ParserNode oldModeNode = new GenericParserNode(
                 "old mode (.*)",
