@@ -21,6 +21,7 @@ class IndividualDiffParser {
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
     }
 
+    // TODO: There's no reason this or parseHeader() need to return a UnifiedDiff. Can be void
     UnifiedDiff parseHeader2(Iterator<String> lineIter, Set<ParserNode> nextNodes) {
         if (!lineIter.hasNext() || (nextNodes == null || nextNodes.isEmpty())) return
         String line = lineIter.next()
