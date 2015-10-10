@@ -180,8 +180,6 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getDiffBody().isEmpty()
     }
 
-    // TODO: State of new mode to similarity index isn't expected with current parser. Needs to be fixed
-    @Ignore
     def "Diff of a renamed binary file that was modified and had it's mode changed should have appropriate attributes"() {
         when:
         UnifiedDiffParser udp = getUdpFromResource('rename_binary_literal_mode_change.patch')
