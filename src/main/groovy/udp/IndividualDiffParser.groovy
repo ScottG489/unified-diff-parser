@@ -13,9 +13,7 @@ class IndividualDiffParser {
     IndividualDiffParser(String rawDiff) {
         unifiedDiff = new UnifiedDiff(rawDiff)
         // TODO: Initialize as modified, will be overridden if otherwise.
-        // TODO: Do we want to consider renames, mode changes, etc. as modified?
-        // Solution to this is likely different diff types (classes) or at least
-        // add rename/copy file status
+        // TODO: Do we want to consider mode changes as modified?
         // TODO: This will likely be set incorrectly for certain binary file statuses
         // TODO:    since we don't currently have detection on all of them for binaries
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
@@ -23,6 +21,7 @@ class IndividualDiffParser {
 
     // TODO: There's no reason this or parseHeader() need to return a UnifiedDiff. Can be void
     UnifiedDiff parseHeader2(Iterator<String> lineIter, Set<ParserNode> nextNodes) {
+        // TODO: Find a more succinct way of doing this
         if (!lineIter.hasNext() || (nextNodes == null || nextNodes.isEmpty())) return
         String line = lineIter.next()
         for (ParserNode node : nextNodes) {
@@ -43,7 +42,6 @@ class IndividualDiffParser {
     // TODO: Inconsistency between added/deleted text and binary files:
     // TODO:        Text: To/From file respectively is '/dev/null' along with file being added/deleted
     // TODO:        Binary: To/From file respectively are both the same
-    // TODO: This should be refactored using 'states' if only for readability
     // TODO: Should 'binary' 'header' lines be considered part of the header? Or are they
     // TODO:    really part of the body? Seems like they are more part of the body
     // TODO:    but since we want to know if the file is binary we parse them as though they are
