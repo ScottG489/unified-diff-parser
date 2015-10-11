@@ -1,6 +1,5 @@
 package udp
 
-import spock.lang.Ignore
 import spock.lang.Specification
 
 // TODO: Use a template diff instead of static files?
@@ -87,6 +86,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getToFile().equals('a')
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
         unifiedDiff.isModifiedFile()
+        unifiedDiff.getOldMode().equals('100644')
         unifiedDiff.getMode().equals('100755')
         unifiedDiff.getDiffBody().isEmpty()
     }
@@ -159,6 +159,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.isModifiedFile()
         unifiedDiff.getChecksumBefore().equals("5c31be7")
         unifiedDiff.getChecksumAfter().equals("38e4da5")
+        unifiedDiff.getOldMode().equals("100644")
         unifiedDiff.getMode().equals("100755")
         !unifiedDiff.getDiffBody().isEmpty()
     }
@@ -177,7 +178,8 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getMode().equals('100755')
         unifiedDiff.getChecksumBefore().equals('78981922613b2afb6025042ff6bd878ac1994e85')
         unifiedDiff.getChecksumAfter().equals('0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17')
-        unifiedDiff.getDiffBody().isEmpty()
+        // TODO: Incorrect assertion. Body should not be empty. This is a bug and needs to be fixed
+//        unifiedDiff.getDiffBody().isEmpty()
     }
 
     def "Diff of a renamed binary file that was modified and had it's mode changed should have appropriate attributes"() {
@@ -193,11 +195,13 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Renamed)
         unifiedDiff.isRenamed()
         unifiedDiff.isBinary()
+        unifiedDiff.getOldMode().equals('100644')
         unifiedDiff.getMode().equals('100755')
         unifiedDiff.getSimilarityIndex().equals('99%')
         unifiedDiff.getChecksumBefore().equals('b8bd059ec9968339eddf762411b39ece50f78e3e')
         unifiedDiff.getChecksumAfter().equals('ba300ede17a9e96ff8bbac6fb9250e18a9d69bea')
-        unifiedDiff.getDiffBody().isEmpty()
+        // TODO: Incorrect assertion. Body should not be empty. This is a bug and needs to be fixed
+//        unifiedDiff.getDiffBody().isEmpty()
     }
 
     def "Diff with 3 files in it should have a size of 3"() {

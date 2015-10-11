@@ -1,12 +1,12 @@
 package udp
 
-// TODO: Add newMode and oldMode fields that are separate from mode and used appropriately
 class UnifiedDiff {
     private String rawDiff
     private String fromFile
     private String toFile
     private FileStatus fileStatus
     private String mode
+    private String oldMode
     private boolean isBinary
     private String diffBody
     private String diffHeader
@@ -25,6 +25,14 @@ class UnifiedDiff {
 
     void setMode(String mode) {
         this.mode = mode
+    }
+
+    String getOldMode() {
+        return oldMode
+    }
+
+    void setOldMode(String oldMode) {
+        this.oldMode = oldMode
     }
 
     FileStatus getFileStatus() {
