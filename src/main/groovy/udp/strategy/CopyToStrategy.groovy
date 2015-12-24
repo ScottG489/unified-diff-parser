@@ -9,6 +9,6 @@ class CopyToStrategy implements LineHandlingStrategy {
         unifiedDiff.setToFile(extractCopyTo(line))
     }
     private static String extractCopyTo(String copyToLine) {
-        StrategyHelper.extractDataFromHeaderLine(copyToLine, LineExpression.COPY_TO, 1)
+        StrategyHelper.extractDataFromLine(copyToLine, LineExpression.COPY_TO, 1)
     }
 }

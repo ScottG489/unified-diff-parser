@@ -11,6 +11,6 @@ class DeletedFileModeStrategy implements LineHandlingStrategy {
     }
 
     static String extractDeletedFileMode(String deletedFileModeLine) {
-        return StrategyHelper.extractDataFromHeaderLine(deletedFileModeLine, LineExpression.DELETED_FILE_MODE, 1)
+        return StrategyHelper.extractDataFromLine(deletedFileModeLine, LineExpression.DELETED_FILE_MODE, 1)
     }
 }

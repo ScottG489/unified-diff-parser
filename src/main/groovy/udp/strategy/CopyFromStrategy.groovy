@@ -10,6 +10,6 @@ class CopyFromStrategy implements LineHandlingStrategy {
         unifiedDiff.setFromFile(extractCopyFrom(line))
     }
     private static String extractCopyFrom(String copyFromLine) {
-        StrategyHelper.extractDataFromHeaderLine(copyFromLine, LineExpression.COPY_FROM, 1)
+        StrategyHelper.extractDataFromLine(copyFromLine, LineExpression.COPY_FROM, 1)
     }
 }

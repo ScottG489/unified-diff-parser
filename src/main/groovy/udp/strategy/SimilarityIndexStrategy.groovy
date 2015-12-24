@@ -9,6 +9,6 @@ class SimilarityIndexStrategy implements LineHandlingStrategy {
         unifiedDiff.setSimilarityIndex(extractSimilarityIndex(line))
     }
     private static String extractSimilarityIndex(String similarityIndexLine) {
-        StrategyHelper.extractDataFromHeaderLine(similarityIndexLine, LineExpression.SIMILARITY_INDEX, 1)
+        StrategyHelper.extractDataFromLine(similarityIndexLine, LineExpression.SIMILARITY_INDEX, 1)
     }
 }

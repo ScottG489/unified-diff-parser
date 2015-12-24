@@ -18,6 +18,8 @@ class UnifiedDiffParser {
         }
     }
 
+    // TODO: This is 'diff' specific and may be something preventing this from becoming a
+    // TODO:    general purpose line parsing util.
     ArrayList<String> getRawDiffs() {
         ArrayList<String> rawDiffs = new ArrayList<String>()
         String diffSplitExpression = '\ndiff --git'

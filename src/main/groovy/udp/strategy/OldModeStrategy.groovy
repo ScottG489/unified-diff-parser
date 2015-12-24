@@ -9,6 +9,6 @@ class OldModeStrategy implements LineHandlingStrategy {
         unifiedDiff.setOldMode(extractOldMode(line))
     }
     private static String extractOldMode(String oldModeLine) {
-        StrategyHelper.extractDataFromHeaderLine(oldModeLine, LineExpression.OLD_MODE, 1)
+        StrategyHelper.extractDataFromLine(oldModeLine, LineExpression.OLD_MODE, 1)
     }
 }

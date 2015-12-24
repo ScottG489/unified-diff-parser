@@ -9,6 +9,6 @@ class FromFileStrategy implements LineHandlingStrategy {
         unifiedDiff.setFromFile(extractFromFile(line))
     }
     private static String extractFromFile(String fromFileLine) {
-        return StrategyHelper.extractDataFromHeaderLine(fromFileLine, LineExpression.FROM_FILE, 2)
+        return StrategyHelper.extractDataFromLine(fromFileLine, LineExpression.FROM_FILE, 2)
     }
 }

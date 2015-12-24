@@ -9,6 +9,6 @@ class ToFileStrategy implements LineHandlingStrategy {
         unifiedDiff.setToFile(extractToFile(line))
     }
     private static String extractToFile(String toFileLine) {
-        return StrategyHelper.extractDataFromHeaderLine(toFileLine, LineExpression.TO_FILE, 2)
+        return StrategyHelper.extractDataFromLine(toFileLine, LineExpression.TO_FILE, 2)
     }
 }

@@ -4,11 +4,11 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class StrategyHelper {
-    static String extractDataFromHeaderLine(
-            String headerLine,
-            Pattern headerLineExpression,
+    static String extractDataFromLine(
+            String line,
+            Pattern lineExpression,
             int groupNumber) {
-        Matcher m = headerLineExpression.matcher(headerLine)
+        Matcher m = lineExpression.matcher(line)
         m.find()
         return m.group(groupNumber)
     }

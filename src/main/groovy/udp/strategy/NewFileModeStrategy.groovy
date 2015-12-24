@@ -10,6 +10,6 @@ class NewFileModeStrategy implements LineHandlingStrategy {
         unifiedDiff.setMode(extractNewFileMode(line))
     }
     private static String extractNewFileMode(String newFileModeLine) {
-        StrategyHelper.extractDataFromHeaderLine(newFileModeLine, LineExpression.NEW_FILE_MODE, 1)
+        StrategyHelper.extractDataFromLine(newFileModeLine, LineExpression.NEW_FILE_MODE, 1)
     }
 }

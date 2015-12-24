@@ -11,9 +11,9 @@ class BinaryStrategy implements LineHandlingStrategy {
         unifiedDiff.setToFile(extractToFileFromBinaryLine(line))
     }
     private static String extractFromFileFromBinaryLine(String binaryFileLine) {
-        return StrategyHelper.extractDataFromHeaderLine(binaryFileLine, LineExpression.BINARY, 2)
+        return StrategyHelper.extractDataFromLine(binaryFileLine, LineExpression.BINARY, 2)
     }
     private static String extractToFileFromBinaryLine(String binaryFileLine)  {
-        return StrategyHelper.extractDataFromHeaderLine(binaryFileLine, LineExpression.BINARY, 4)
+        return StrategyHelper.extractDataFromLine(binaryFileLine, LineExpression.BINARY, 4)
     }
 }

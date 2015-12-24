@@ -8,8 +8,6 @@ class UnifiedDiff {
     private String mode
     private String oldMode
     private boolean isBinary
-    private String diffBody
-    private String diffHeader
     private String similarityIndex
     private String dissimilarityIndex
     private String checksumBefore
@@ -102,21 +100,6 @@ class UnifiedDiff {
 
     void setChecksumAfter(String checksumAfter) {
         this.checksumAfter = checksumAfter
-    }
-
-    String getDiffBody() {
-        return diffBody
-    }
-
-    void setDiffBody(String diffBody) {
-        this.diffBody = diffBody
-    }
-    String getDiffHeader() {
-        return diffHeader
-    }
-
-    void setDiffHeader(String diffHeader) {
-        this.diffHeader = diffHeader
     }
 
     boolean isAddedFile() {

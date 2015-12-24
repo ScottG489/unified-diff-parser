@@ -16,12 +16,12 @@ class IndexStrategy implements LineHandlingStrategy {
         }
     }
     private static String extractChecksumBefore(String indexLine) {
-        StrategyHelper.extractDataFromHeaderLine(indexLine, LineExpression.INDEX, 1)
+        StrategyHelper.extractDataFromLine(indexLine, LineExpression.INDEX, 1)
     }
     private static String extractChecksumAfter(String indexLine) {
-        StrategyHelper.extractDataFromHeaderLine(indexLine, LineExpression.INDEX, 2)
+        StrategyHelper.extractDataFromLine(indexLine, LineExpression.INDEX, 2)
     }
     private static String extractMode(String indexLine) {
-        StrategyHelper.extractDataFromHeaderLine(indexLine, LineExpression.INDEX, 3)
+        StrategyHelper.extractDataFromLine(indexLine, LineExpression.INDEX, 3)
     }
 }

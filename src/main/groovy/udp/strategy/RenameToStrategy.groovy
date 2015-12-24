@@ -9,6 +9,6 @@ class RenameToStrategy implements LineHandlingStrategy {
         unifiedDiff.setToFile(extractRenameTo(line))
     }
     private static String extractRenameTo(String renameToLine) {
-        StrategyHelper.extractDataFromHeaderLine(renameToLine, LineExpression.RENAME_TO, 1)
+        StrategyHelper.extractDataFromLine(renameToLine, LineExpression.RENAME_TO, 1)
     }
 }
