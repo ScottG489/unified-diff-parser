@@ -21,6 +21,8 @@ class UnifiedDiffParserTest extends Specification {
         !unifiedDiff.getDiffBody().isEmpty()
     }
 
+    // XXX: Failing because we are cutting off headers at the index line but there's more
+    // XXX:     relevant info after such as 'GIT binary patch' line and 'Binary files...' line
     def "Diff of an added binary file should have appropriate attributes"() {
         when:
         UnifiedDiffParser udp = getUdpFromResource('added_binary.patch')
@@ -36,7 +38,7 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.isAddedFile()
         unifiedDiff.isBinary()
         unifiedDiff.getMode().equals('100644')
-        unifiedDiff.getDiffBody().isEmpty()
+        unifiedDiff.getDiffBody().equals("Binary files /dev/null and b/doc/doxygen/html/bc_s.png differ\r\n")
     }
 
     def "Diff of an added empty file should have appropriate attributes"() {
@@ -178,8 +180,8 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getMode().equals('100755')
         unifiedDiff.getChecksumBefore().equals('78981922613b2afb6025042ff6bd878ac1994e85')
         unifiedDiff.getChecksumAfter().equals('0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17')
-        // TODO: Incorrect assertion. Body should not be empty. This is a bug and needs to be fixed
-//        unifiedDiff.getDiffBody().isEmpty()
+        // TODO: Body should not be empty. This is a bug and needs to be fixed
+        !unifiedDiff.getDiffBody().isEmpty()
     }
 
     def "Diff of a renamed binary file that was modified and had it's mode changed should have appropriate attributes"() {
@@ -200,8 +202,8 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getSimilarityIndex().equals('99%')
         unifiedDiff.getChecksumBefore().equals('b8bd059ec9968339eddf762411b39ece50f78e3e')
         unifiedDiff.getChecksumAfter().equals('ba300ede17a9e96ff8bbac6fb9250e18a9d69bea')
-        // TODO: Incorrect assertion. Body should not be empty. This is a bug and needs to be fixed
-//        unifiedDiff.getDiffBody().isEmpty()
+        // TODO: Body should not be empty. This is a bug and needs to be fixed
+        !unifiedDiff.getDiffBody().isEmpty()
     }
 
     def "Diff with 3 files in it should have a size of 3"() {

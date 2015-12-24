@@ -19,8 +19,7 @@ class IndividualDiffParser {
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
     }
 
-    // TODO: There's no reason this or parseHeader() need to return a UnifiedDiff. Can be void
-    UnifiedDiff parseHeader2(Iterator<String> lineIter, Set<ParserNode> nextNodes) {
+    void parseHeader2(Iterator<String> lineIter, Set<ParserNode> nextNodes) {
         // TODO: Find a more succinct way of doing this
         if (!lineIter.hasNext() || (nextNodes == null || nextNodes.isEmpty())) return
         String line = lineIter.next()
@@ -28,15 +27,22 @@ class IndividualDiffParser {
             if (node.isApplicable(line)) {
                 LineHandlingStrategy lineHandler = node.getLineHandlingStrategy()
                 lineHandler.handle(line, unifiedDiff)
-                return parseHeader2(lineIter, node.getNextNodes())
+                parseHeader2(lineIter, node.getNextNodes())
+                return
             }
         }
-        throw new Exception("Malformed. Didn't match any expected nodes")
+        throw new Exception("Malformed patch. Line was not expected: ${line}")
     }
 
-    UnifiedDiff parseHeader() {
-        Iterator<String> lineIter = unifiedDiff.getDiffHeader().readLines().iterator()
-        return parseHeader2(lineIter, [getNodeTree()].toSet())
+    // XXX: I think we should remove the notion of a 'header' and 'body' and just parse the entire
+    // XXX:     string as is. This removes the need for division of body and header
+    // XXX:     which is a diff specific thing (preventing this from being a line parsing util) and
+    // XXX:     also removes the issue of needing 'header' information from things not technically
+    // XXX:     in the header such as the 'GIT binary patch' and 'Binary files' lines
+    void parseHeader() {
+//        Iterator<String> lineIter = unifiedDiff.getDiffHeader().readLines().iterator()
+        Iterator<String> lineIter = unifiedDiff.getRawDiff().readLines().iterator()
+        parseHeader2(lineIter, [getNodeTree()].toSet())
     }
 
     // TODO: Inconsistency between added/deleted text and binary files:
@@ -56,7 +62,6 @@ class IndividualDiffParser {
         if (unifiedDiff.getToFile() == null) {
             unifiedDiff.setToFile(extractToFileFromFirstLine())
         }
-        // TODO: Doesn't get body for binary patches
         unifiedDiff.setDiffBody(extractDiffBody(unifiedDiff.getRawDiff()))
         return unifiedDiff
     }
@@ -75,29 +80,48 @@ class IndividualDiffParser {
 
     private static String extractDiffBody(String rawDiff) {
         // XXX: This is incorrect as the diff body won't match this for binary patches.
-        String expression = '\n@@'
-        Pattern p = Pattern.compile(expression)
-        Matcher m = p.matcher(rawDiff)
+        Matcher m = getMatcherFor('\n@@', rawDiff)
         if (m.find()) {
+            // + 1 because we don't want the leading newline
             rawDiff.substring(m.start() + 1)
         } else {
             // Is either a binary or empty file so there's no body
-            return ""
+            // TODO: What if the body of the diff happens to have 'index' at the start of a
+            // TODO:    line (in the binary representation)? I think it should be safe
+            // TODO:    to still take the first 'index' as the delimiter. But test this.
+            m = getMatcherFor('\nindex[^\n]*\n', rawDiff)
+            if (m.find()) {
+                return rawDiff.substring(m.end())
+            } else {
+                // TODO: Assumed empty body. Bad assumption?
+                return ""
+            }
         }
     }
 
     private static String extractDiffHeader(String rawDiff) {
         // XXX: This is incorrect as the diff body won't match this for binary patches.
-        String expression = '\n@@'
-        Pattern p = Pattern.compile(expression)
-        Matcher m = p.matcher(rawDiff)
+        Matcher m = getMatcherFor('\n@@', rawDiff)
         if (m.find()) {
-            // + 1 to get newline
+            // + 1 to get the trailing newline
             return rawDiff.substring(0, m.start() + 1)
         } else {
             // Is either a binary or empty file so it's all a header
-            return rawDiff
+            // TODO: Should just take up until the 'index' line
+            m = getMatcherFor('\nindex[^\n]*\n', rawDiff)
+            if (m.find()) {
+                return rawDiff.substring(0, m.end())
+            } else {
+                // TODO: Assumed empty body so entire diff is the header. Bad assumption?
+                return rawDiff
+            }
         }
+    }
+
+    private static Matcher getMatcherFor(String expression, String rawDiff) {
+        Pattern p = Pattern.compile(expression)
+        Matcher m = p.matcher(rawDiff)
+        return m
     }
 
     static ParserNode getNodeTree() {
