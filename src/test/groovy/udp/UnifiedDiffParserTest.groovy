@@ -20,8 +20,6 @@ class UnifiedDiffParserTest extends Specification {
         unifiedDiff.getMode().equals('100644')
     }
 
-    // XXX: Failing because we are cutting off headers at the index line but there's more
-    // XXX:     relevant info after such as 'GIT binary patch' line and 'Binary files...' line
     def "Diff of an added binary file should have appropriate attributes"() {
         when:
         UnifiedDiffParser udp = getUdpFromResource('added_binary.patch')
