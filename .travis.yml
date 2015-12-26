@@ -12,6 +12,7 @@ addons:
       name: ScottG489/unified-diff-parser
       description: Parser for unified diffs
     build_command: ./gradlew build
+    branch_pattern: master
 
 after_success:
 - ./gradlew cobertura coveralls
