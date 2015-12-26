@@ -1,4 +1,17 @@
 language: groovy
 
+env:
+  global:
+    # COVERITY_SCAN_TOKEN
+    # ** specific to your project **
+    - secure: "da9TNKh43mxkcLnsPZnvGg"
+
+addons:
+  coverity_scan:
+    project:
+      name: ScottG489/unified-diff-parser
+      description: Parser for unified diffs
+    build_command: ./gradlew build
+
 after_success:
 - ./gradlew cobertura coveralls
