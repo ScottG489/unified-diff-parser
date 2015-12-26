@@ -4,13 +4,12 @@ env:
   global:
     # COVERITY_SCAN_TOKEN
     # ** specific to your project **
-    - secure: "da9TNKh43mxkcLnsPZnvGg"
+    - secure: "aPuRCLtOHO9c8JNywyXWChl8UVt5Cl/j7fZ7k6Q82nb8fP5qxgeAkjZBrGZ7JxiQvpjpj9Vy+Np09BehhtxQ+eTUq97l7QWEL0VFBFO3LEPzUKE1kanrbWmOS7x81vCnoFCYJWCkxZa8ldtWveC0JdkJ7A6EbKPSiT/ExMB/1yGeUS/JdfYgEdjccvwkrulntX9cCymVTjKwk8N79QgcWTMMHvc4xtgSU1Gbq+0Df9GJSwZAr65o7vvg7tgwls1UYmvkOJJEktgNEolY4e7Pves1HZp8n0hTdU7GQctCusnWZPA9m2tMC8IpWRMqZANCQSwcFkCdeOfmo+jaojcta6GaktOg2SJUpu2TckMbTK1W6l43upxul5WnYYLk6VJLM3d9ZKufGMsScBXFecdEJ1S9tXr+Q4DnXBgd8933dIT349YtRHS+hXfTkoNWvIn3Mx2h61vj+/Zqi9A177aij2gxLHiXpFWGJCheiDBz8jVeqlPgGxpo/xA7gQATT+WbmQCTPFufufWcELW/oZEKnRLEZ3BN9EScWhTfy+SqPMh8Fkks0ZPDyx3QWOzjdj4sOWPV/7yVd9uE61V8i1Gsf+bU4G2eGHyOkAun7phmtRLB9zdeEIxitY+x64ftN4mRi/WQ9kO9AUyFxoL6MF4nbGfGizhxrQsY/WtQyMDVTxE="
 
 addons:
   coverity_scan:
     project:
       name: ScottG489/unified-diff-parser
-      description: Parser for unified diffs
     build_command: ./gradlew build
     branch_pattern: master
 
