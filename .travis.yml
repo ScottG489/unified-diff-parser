@@ -11,6 +11,7 @@ addons:
     project:
       name: ScottG489/unified-diff-parser
     notification_email: scottg489@gmail.com
+    build_command_prepend: ./gradlew clean
     build_command: ./gradlew build
     branch_pattern: master
 
