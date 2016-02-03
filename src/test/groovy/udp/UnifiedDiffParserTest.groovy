@@ -1,13 +1,17 @@
 package udp
 
 import spock.lang.Specification
+import udp.config.ConfigParser
+import udp.node.ParserNode
 
+// TODO: FIX FORMATTING OF THIS FILE!!!! (ctrl alt l)
 // TODO: Use a template diff instead of static files?
 class UnifiedDiffParserTest extends Specification {
     def "Diff of an added file should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('added.patch')
-        udp.parse()
+        String text = getTestResourceText('added.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -22,8 +26,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of an added binary file should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('added_binary.patch')
-        udp.parse()
+        String text = getTestResourceText('added_binary.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -39,8 +44,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of an added empty file should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('added_empty.patch')
-        udp.parse()
+        String text = getTestResourceText('added_empty.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -55,8 +61,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a removed file should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('removed.patch')
-        udp.parse()
+        String text = getTestResourceText('removed.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -71,8 +78,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a file with changed permissions should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('mode_change.patch')
-        udp.parse()
+        String text = getTestResourceText('mode_change.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -88,8 +96,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a renamed file with a similarity index should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('rename_similarity_index.patch')
-        udp.parse()
+        String text = getTestResourceText('rename_similarity_index.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -104,8 +113,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a copied file with a similarity index should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('copy_similarity_index.patch')
-        udp.parse()
+        String text = getTestResourceText('copy_similarity_index.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -120,8 +130,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a modified file should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('modified.patch')
-        udp.parse()
+        String text = getTestResourceText('modified.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -138,8 +149,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a modified and mode changed file should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('modified_mode_change.patch')
-        udp.parse()
+        String text = getTestResourceText('modified_mode_change.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -157,8 +169,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff with GIT binary patch line should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('added_binary_literal.patch')
-        udp.parse()
+        String text = getTestResourceText('added_binary_literal.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -173,8 +186,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff of a renamed binary file that was modified and had it's mode changed should have appropriate attributes"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('rename_binary_literal_mode_change.patch')
-        udp.parse()
+        String text = getTestResourceText('rename_binary_literal_mode_change.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
         UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
@@ -193,8 +207,9 @@ class UnifiedDiffParserTest extends Specification {
 
     def "Diff with 3 files in it should have a size of 3"() {
         when:
-        UnifiedDiffParser udp = getUdpFromResource('multi.patch')
-        udp.parse()
+        String text = getTestResourceText('multi.patch')
+        UnifiedDiffParser udp = getUdpFromResource()
+        udp.parse(text)
         List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
 
         then:
@@ -202,9 +217,13 @@ class UnifiedDiffParserTest extends Specification {
     }
 
 
-    private static UnifiedDiffParser getUdpFromResource(String resourceName) {
+    private static UnifiedDiffParser getUdpFromResource() {
+        ConfigParser configParser = new ConfigParser()
+        // TODO: Bad hard coded values
+        InputStream config = new FileInputStream("src/test/resources/udp/config/diff_test.json")
+        ParserNode firstNode = configParser.generateParserConfig(config).get('diffGitNode')
         return new UnifiedDiffParser(
-                getTestResourceText(resourceName)
+                firstNode
         )
     }
 

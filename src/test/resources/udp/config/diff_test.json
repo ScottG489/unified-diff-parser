@@ -1,0 +1,125 @@
+[
+  {
+    "name": "binaryFilesNode",
+    "applicabilityPattern": "Binary files (a/)*(.*) and (b/)*(.*) differ",
+    "lineHandlingStrategy": "udp.strategy.BinaryStrategy",
+    "possibleNextNodes": []
+  },
+  {
+    "name": "gitBinaryNode",
+    "applicabilityPattern": "GIT binary patch",
+    "lineHandlingStrategy": "udp.strategy.GitBinaryStrategy",
+    "possibleNextNodes": []
+  },
+  {
+    "name": "toFileNode",
+    "applicabilityPattern": "\\+\\+\\+ (b/)*(.*)",
+    "lineHandlingStrategy": "udp.strategy.ToFileStrategy",
+    "possibleNextNodes": []
+  },
+  {
+    "name": "fromFileNode",
+    "applicabilityPattern": "--- (a/)*(.*)",
+    "lineHandlingStrategy": "udp.strategy.FromFileStrategy",
+    "possibleNextNodes": [
+      "toFileNode"
+    ]
+  },
+  {
+    "name": "indexNode",
+    "applicabilityPattern": "index (.*)\\.\\.([^ ]*) *(.*)",
+    "lineHandlingStrategy": "udp.strategy.IndexStrategy",
+    "possibleNextNodes": [
+      "fromFileNode",
+      "binaryFilesNode",
+      "gitBinaryNode"
+    ]
+  },
+  {
+    "name": "copyToNode",
+    "applicabilityPattern": "copy to (.*)",
+    "lineHandlingStrategy": "udp.strategy.CopyToStrategy",
+    "possibleNextNodes": [
+      "indexNode"
+    ]
+  },
+  {
+    "name": "copyFromNode",
+    "applicabilityPattern": "copy from (.*)",
+    "lineHandlingStrategy": "udp.strategy.CopyFromStrategy",
+    "possibleNextNodes": [
+      "copyToNode"
+    ]
+  },
+  {
+    "name": "renameToNode",
+    "applicabilityPattern": "rename to (.*)",
+    "lineHandlingStrategy": "udp.strategy.RenameToStrategy",
+    "possibleNextNodes": [
+      "indexNode"
+    ]
+  },
+  {
+    "name": "renameFromNode",
+    "applicabilityPattern": "rename from (.*)",
+    "lineHandlingStrategy": "udp.strategy.RenameFromStrategy",
+    "possibleNextNodes": [
+      "renameToNode"
+    ]
+  },
+  {
+    "name": "similarityIndexNode",
+    "applicabilityPattern": "similarity index (.*)",
+    "lineHandlingStrategy": "udp.strategy.SimilarityIndexStrategy",
+    "possibleNextNodes": [
+      "copyFromNode",
+      "renameFromNode"
+    ]
+  },
+  {
+    "name": "newModeNode",
+    "applicabilityPattern": "new mode (.*)",
+    "lineHandlingStrategy": "udp.strategy.NewModeStrategy",
+    "possibleNextNodes": [
+      "indexNode",
+      "similarityIndexNode"
+    ]
+  },
+  {
+    "name": "oldModeNode",
+    "applicabilityPattern": "old mode (.*)",
+    "lineHandlingStrategy": "udp.strategy.OldModeStrategy",
+    "possibleNextNodes": [
+      "newModeNode"
+    ]
+  },
+  {
+    "name": "deletedFileNode",
+    "applicabilityPattern": "deleted file mode (.*)",
+    "lineHandlingStrategy": "udp.strategy.DeletedFileModeStrategy",
+    "possibleNextNodes": [
+      "indexNode"
+    ]
+  },
+  {
+    "name": "newFileModeNode",
+    "applicabilityPattern": "new file mode (.*)",
+    "lineHandlingStrategy": "udp.strategy.NewFileModeStrategy",
+    "possibleNextNodes": [
+      "indexNode"
+    ]
+  },
+  {
+    "name": "diffGitNode",
+    "applicabilityPattern": "diff --git a/(.*) b/(.*)",
+    "lineHandlingStrategy": "udp.strategy.EmptyHandlingStrategy",
+    "possibleNextNodes": [
+      "newFileModeNode",
+      "deletedFileNode",
+      "indexNode",
+      "oldModeNode",
+      "similarityIndexNode"
+    ]
+  }
+]
+
