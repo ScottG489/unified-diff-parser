@@ -1,21 +1,27 @@
 package udp
 
+import udp.node.ParserNode
+
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class UnifiedDiffParser {
     private List<UnifiedDiff> unifiedDiffs
     private String rawUnifiedDiff;
+    private IndividualDiffParser parser;
 
-    UnifiedDiffParser(String unifiedDiff) {
-        this.rawUnifiedDiff = unifiedDiff
+    UnifiedDiffParser(ParserNode firstNode) {
+        parser = new IndividualDiffParser(firstNode)
         this.unifiedDiffs = new ArrayList<UnifiedDiff>()
     }
 
-    public void parse() {
+    public List<UnifiedDiff> parse(String unifiedDiff) {
+        this.rawUnifiedDiff = unifiedDiff
         for (String diff : getRawDiffs()) {
-            unifiedDiffs.add(fromRawDiff(diff))
+            unifiedDiffs.add(parser.parse(diff))
         }
+
+        return unifiedDiffs
     }
 
     // TODO: This is 'diff' specific and may be something preventing this from becoming a
@@ -36,11 +42,6 @@ class UnifiedDiffParser {
         rawDiffs.add(rawUnifiedDiff.substring(pos))
 
         return rawDiffs
-    }
-
-    static UnifiedDiff fromRawDiff(String rawDiff) {
-        IndividualDiffParser individualDiffParser = new IndividualDiffParser(rawDiff)
-        return individualDiffParser.parse()
     }
 
     public List<UnifiedDiff> getUnifiedDiffs() {
