@@ -13,8 +13,7 @@ addons:
     build_command: "./gradlew compileGroovy"
     branch_pattern: master
 after_success:
-- "./gradlew cobertura coveralls"
-  "./gradlew bintrayUpload"
+  - "./gradlew cobertura coveralls bintrayUpload"
 deploy:
   provider: releases
   api_key:
