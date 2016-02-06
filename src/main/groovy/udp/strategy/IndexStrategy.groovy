@@ -5,14 +5,15 @@ import udp.UnifiedDiff
 
 class IndexStrategy implements LineHandlingStrategy {
     @Override
-    void handle(String line, UnifiedDiff unifiedDiff) {
-        unifiedDiff.setChecksumBefore(extractChecksumBefore(line))
-        unifiedDiff.setChecksumAfter(extractChecksumAfter(line))
+    void handle(String line, Object model) {
+        model = (UnifiedDiff) model;
+        model.setChecksumBefore(extractChecksumBefore(line))
+        model.setChecksumAfter(extractChecksumAfter(line))
         // TODO: Only try to get the mode here if it hasn't changed
         // Will a index line as the second line always be a modified file?
         String mode = extractMode(line)
         if (!mode.isEmpty()) {
-            unifiedDiff.setMode(mode)
+            model.setMode(mode)
         }
     }
     private static String extractChecksumBefore(String indexLine) {

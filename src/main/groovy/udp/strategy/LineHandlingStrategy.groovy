@@ -1,8 +1,8 @@
 package udp.strategy
 
-import udp.UnifiedDiff
-
 interface LineHandlingStrategy {
-    // TODO: The dependency on UnifiedDiff might have to go
-    void handle(String line, UnifiedDiff unifiedDiff)
+    // TODO: model used to be a UnifiedDiff but to decouple it was made an object. This means
+    // TODO:    handler implementation has to cast it to what it likes. Is there a better
+    // TODO:    way to do this?
+    void handle(String line, Object model)
 }

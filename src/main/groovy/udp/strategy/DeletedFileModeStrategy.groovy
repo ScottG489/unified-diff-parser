@@ -5,9 +5,10 @@ import udp.UnifiedDiff
 
 class DeletedFileModeStrategy implements LineHandlingStrategy {
     @Override
-    void handle(String line, UnifiedDiff unifiedDiff) {
-        unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Removed)
-        unifiedDiff.setMode(extractDeletedFileMode(line))
+    void handle(String line, Object model) {
+        model = (UnifiedDiff) model;
+        model.setFileStatus(UnifiedDiff.FileStatus.Removed)
+        model.setMode(extractDeletedFileMode(line))
     }
 
     static String extractDeletedFileMode(String deletedFileModeLine) {
