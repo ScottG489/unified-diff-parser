@@ -10,12 +10,12 @@ addons:
       name: ScottG489/unified-diff-parser
     notification_email: scottg489@gmail.com
     build_command_prepend: "./gradlew clean"
-    build_command: "./gradlew compileGroovy"
+    build_command: "./gradlew compileGroovy bintrayUpload"
     branch_pattern: master
 after_success:
   - "./gradlew cobertura coveralls"
 deploy:
   provider: script
-  script: gradlew bintrayUpload
+  script: "gradlew bintrayUpload"
   on:
     branch: master
