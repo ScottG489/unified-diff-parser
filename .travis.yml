@@ -13,7 +13,6 @@ addons:
     build_command: "./gradlew compileGroovy"
     branch_pattern: master
 after_success:
-  - "./gradlew cobertura coveralls bintrayUpload"
   - "./gradlew bintrayUpload"
 deploy:
   provider: releases
