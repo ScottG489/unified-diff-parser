@@ -1,11 +1,7 @@
 language: groovy
-
 env:
   global:
-    # COVERITY_SCAN_TOKEN
-    # ** specific to your project **
-    - secure: "XabE5vlRY6yV5JvKgg3z6U08yDe5uGEBiNO/mJE7KpfLkm6Qf2E2G9A4n69gvs9Gydx1I4FMH5+zxTh3EZqKDI7MGuay7FZ1Qh0FJQJUYWMiBbp2+zIFnZQDTq74IWIzo0tXzcMjnq/MAz2gbQFETu8ejy9jnqqBwvZfhXXUX8FV+0lWTJtNZPiZGyzg3R2rcc2NW8LpvFQQtbBPH4xZYMPw/8tBT43tCp0lYGwsljqNod9hvuv5wsK+VYPe7rVzenuqIGd1QSHnVf2CBkVJOhB2tjwUHBKE+o4t5jwR5KIthyKjIcQh4N9Jq+tScQbCUlXIMc1MqdXkrMyfkhpldRlJtNv7gdNoRyPd4nMTnSQYwGhhe9CJt/luMQbU6JlBMDZrOyOCW7CONuuRI/s7REalGDKfdBWQ3D/TEdi+902pgGJMKHCugv0w5bXs1fA88PtW/vZ/MlOQcA+ynXt5nsTDTESfYMXbiW+Pwd4kYTRGaVCg+6Ih1CaiQtLb2oYBsIyUQ8zj4nHeoaTxOWRIQZFIQRUF1GswQGu/3H+7cQZT38cHRHlYC7Y5AWbFrfEU6ej6av/SKkuEJEwNoURjppot9oaRa+B3otmofdh7iR+mqDt6WAoLUNhsDu/pHKDYAuEuxr/9lXvsT3B1lNghbnnoHhEoQEECVkEz1tJ1gpA="
-
+  - secure: XabE5vlRY6yV5JvKgg3z6U08yDe5uGEBiNO/mJE7KpfLkm6Qf2E2G9A4n69gvs9Gydx1I4FMH5+zxTh3EZqKDI7MGuay7FZ1Qh0FJQJUYWMiBbp2+zIFnZQDTq74IWIzo0tXzcMjnq/MAz2gbQFETu8ejy9jnqqBwvZfhXXUX8FV+0lWTJtNZPiZGyzg3R2rcc2NW8LpvFQQtbBPH4xZYMPw/8tBT43tCp0lYGwsljqNod9hvuv5wsK+VYPe7rVzenuqIGd1QSHnVf2CBkVJOhB2tjwUHBKE+o4t5jwR5KIthyKjIcQh4N9Jq+tScQbCUlXIMc1MqdXkrMyfkhpldRlJtNv7gdNoRyPd4nMTnSQYwGhhe9CJt/luMQbU6JlBMDZrOyOCW7CONuuRI/s7REalGDKfdBWQ3D/TEdi+902pgGJMKHCugv0w5bXs1fA88PtW/vZ/MlOQcA+ynXt5nsTDTESfYMXbiW+Pwd4kYTRGaVCg+6Ih1CaiQtLb2oYBsIyUQ8zj4nHeoaTxOWRIQZFIQRUF1GswQGu/3H+7cQZT38cHRHlYC7Y5AWbFrfEU6ej6av/SKkuEJEwNoURjppot9oaRa+B3otmofdh7iR+mqDt6WAoLUNhsDu/pHKDYAuEuxr/9lXvsT3B1lNghbnnoHhEoQEECVkEz1tJ1gpA=
 addons:
   code_climate:
     repo_token: 2cd4295a4d8f97736951fdb38a5529b985466b7cfcc00ba845983e6a8a66d7c7
@@ -13,9 +9,15 @@ addons:
     project:
       name: ScottG489/unified-diff-parser
     notification_email: scottg489@gmail.com
-    build_command_prepend: ./gradlew clean
-    build_command: ./gradlew compileGroovy
+    build_command_prepend: "./gradlew clean"
+    build_command: "./gradlew compileGroovy"
     branch_pattern: master
-
 after_success:
-- ./gradlew cobertura coveralls
+- "./gradlew cobertura coveralls"
+deploy:
+  provider: releases
+  api_key:
+    secure: bAbby4CJwgPRUd9xyH1PBurZO05H8mudDhqkkfgbVoRwysthpAeplJt5lC63lkHXJXzDv9PuNmdsWdIbfrJ4NTcdmW3DJckilHNUCOp0sM3HUIW4yBrkp7pMSttgn3eegwliG2CVabz6O8TYNX3wL7FTtcCyisJugVen5rqaJd4+WgrboOcuuFRsUHNs3ehQgcusBbt8iV1iT8j2mkSzDZxnW1x4JQICCXqUGxiy7r0aex06aoAwS1dbTeWAItPR3gE+2U2znYpuiFWguzDcKXo7Qocg1WOFyNDKoAWx15foNeRRJkPyoZLc2Wk/+SavLZ0wF6qrg3VJwVqR0R3yRzJZ6fpvxdlKymdPtHm+cMDXVGhfvzX5CD74f00GS/nYIoXq0xRUg1W1RbxBi20mPDO8Opuzj9oLxvJGuN0sTcD/xP5KzD/3x1W9I8936QjV6IIewj9rYCRRj9HFmVUpIN21rQBgf5v3WYv2v4HGP85Yy1/E18/38dTzhtYfttUdIhQBPnhqtQNeLlqqk0Z7r9Aje/nD1TttUFVdeoPXvp1XZanfzjb3M3gb+cZTOhU3lYQaXtQO4bPkypsGt6U3xnLOCA9/mH+yVtaEfIDlVPqzhc28y2XXOq4o4wMypdi3UEg22GAjmXIFkQOKMfQHaOJxUIguJJM+0yH+8UzYGGE=
+  file: ".travis.yml"
+  on:
+    repo: ScottG489/unified-diff-parser
