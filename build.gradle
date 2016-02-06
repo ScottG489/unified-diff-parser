@@ -1,9 +1,12 @@
+def ENV = System.getenv()
 buildscript {
     repositories {
         mavenCentral()
+    	jcenter()
     }
 
     dependencies {
+	classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' // cobertura plugin
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
     }
@@ -12,6 +15,8 @@ apply plugin: 'groovy'
 apply plugin: 'idea'
 apply plugin: 'cobertura'
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
 cobertura.coverageFormats = ['html', 'xml'] // coveralls plugin depends on xml format report
 cobertura.coverageSourceDirs = sourceSets.main.groovy.srcDirs
@@ -34,3 +39,27 @@ compileGroovy {
     options.forkOptions.executable = "javac"
 }
 
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'udp'
+            artifactId 'unified-diff-parser'
+            version "0.${ENV['TRAVIS_BUILD_NUMBER']}"
+        }
+    }
+}
+bintray {
+    user = 'scottg489'
+    key = 'cbff38ca7ecc80c2e5fd455770479aeb57619eca'
+    pkg {
+        repo = 'maven'
+        name = 'unified-diff-parser'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'git@github.com:ScottG489/unified-diff-parser.git'
+       version {
+            name = '0.1-alpha'
+        }
+    }
+    publications = ['MyPublication']
+}
