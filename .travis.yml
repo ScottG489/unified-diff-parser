@@ -13,11 +13,7 @@ addons:
     build_command: "./gradlew compileGroovy"
     branch_pattern: master
 after_success:
-  - "./gradlew bintrayUpload"
+  - "./gradlew cobertura coveralls"
 deploy:
-  provider: releases
-  api_key:
-    secure: bAbby4CJwgPRUd9xyH1PBurZO05H8mudDhqkkfgbVoRwysthpAeplJt5lC63lkHXJXzDv9PuNmdsWdIbfrJ4NTcdmW3DJckilHNUCOp0sM3HUIW4yBrkp7pMSttgn3eegwliG2CVabz6O8TYNX3wL7FTtcCyisJugVen5rqaJd4+WgrboOcuuFRsUHNs3ehQgcusBbt8iV1iT8j2mkSzDZxnW1x4JQICCXqUGxiy7r0aex06aoAwS1dbTeWAItPR3gE+2U2znYpuiFWguzDcKXo7Qocg1WOFyNDKoAWx15foNeRRJkPyoZLc2Wk/+SavLZ0wF6qrg3VJwVqR0R3yRzJZ6fpvxdlKymdPtHm+cMDXVGhfvzX5CD74f00GS/nYIoXq0xRUg1W1RbxBi20mPDO8Opuzj9oLxvJGuN0sTcD/xP5KzD/3x1W9I8936QjV6IIewj9rYCRRj9HFmVUpIN21rQBgf5v3WYv2v4HGP85Yy1/E18/38dTzhtYfttUdIhQBPnhqtQNeLlqqk0Z7r9Aje/nD1TttUFVdeoPXvp1XZanfzjb3M3gb+cZTOhU3lYQaXtQO4bPkypsGt6U3xnLOCA9/mH+yVtaEfIDlVPqzhc28y2XXOq4o4wMypdi3UEg22GAjmXIFkQOKMfQHaOJxUIguJJM+0yH+8UzYGGE=
-  file: ".travis.yml"
-  on:
-    repo: ScottG489/unified-diff-parser
+  provider: script
+  script: gradlew bintrayUpload
