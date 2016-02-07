@@ -1,6 +1,6 @@
 package udp
 
-import udp.node.ParserNode
+import rdglp.node.ParserNode
 
 import java.util.regex.Matcher
 import java.util.regex.Pattern

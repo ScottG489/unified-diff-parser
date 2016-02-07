@@ -1,6 +1,6 @@
 package udp
 
-import udp.node.ParserNode
+import rdglp.node.ParserNode
 
 abstract class LineParser {
     protected ParserNode firstNode

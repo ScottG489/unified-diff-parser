@@ -1,6 +1,7 @@
 package udp.strategy
 
 import rdglp.strategy.LineHandlingStrategy
+import rdglp.strategy.util.StrategyHelper
 import udp.LineExpression
 import udp.UnifiedDiff
 
