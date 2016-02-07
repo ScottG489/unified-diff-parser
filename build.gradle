@@ -35,11 +35,6 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-compileGroovy {
-    options.fork = true
-    options.forkOptions.executable = "javac"
-}
-
 jacocoTestReport {
     reports {
         xml.enabled = true
