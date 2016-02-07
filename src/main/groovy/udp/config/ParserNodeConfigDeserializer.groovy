@@ -5,12 +5,9 @@ import com.fasterxml.jackson.core.JsonProcessingException
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.ArrayNode
+import rdglp.strategy.LineHandlingStrategy
 import udp.node.GenericParserNode
 import udp.node.ParserNode
-import udp.strategy.LineHandlingStrategy
-
-import javax.sound.sampled.Line
 
 class ParserNodeConfigDeserializer extends JsonDeserializer<ParserNodeConfig> {
     @Override

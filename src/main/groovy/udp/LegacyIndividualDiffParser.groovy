@@ -1,9 +1,9 @@
 package udp
 
+import rdglp.strategy.LineHandlingStrategy
 import udp.config.ConfigParser
 import udp.config.ParserConfig
 import udp.node.ParserNode
-import udp.strategy.*
 
 import java.util.regex.Matcher
 

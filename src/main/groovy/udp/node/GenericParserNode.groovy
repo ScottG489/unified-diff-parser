@@ -1,6 +1,6 @@
 package udp.node
 
-import udp.strategy.LineHandlingStrategy
+import rdglp.strategy.LineHandlingStrategy
 
 import java.util.regex.Pattern
 

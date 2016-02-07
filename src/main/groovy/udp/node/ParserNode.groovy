@@ -1,6 +1,6 @@
 package udp.node
 
-import udp.strategy.LineHandlingStrategy
+import rdglp.strategy.LineHandlingStrategy
 
 interface ParserNode {
     boolean isApplicable(String line)
