@@ -65,8 +65,8 @@ publishing {
     }
 }
 bintray {
-    user = 'scottg489'
-    key = 'cbff38ca7ecc80c2e5fd455770479aeb57619eca'
+    user = "${ENV['BINTRAY_USER']}"
+    key = "${ENV['BINTRAY_KEY']}"
     pkg {
         repo = 'maven'
         name = 'unified-diff-parser'
