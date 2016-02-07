@@ -1,20 +1,26 @@
+def ENV = System.getenv()
 buildscript {
     repositories {
         mavenCentral()
+    	jcenter()
     }
 
     dependencies {
+	classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.6'
         classpath 'net.saliman:gradle-cobertura-plugin:2.0.0' // cobertura plugin
         classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.4.0'
     }
 }
 apply plugin: 'groovy'
 apply plugin: 'idea'
-apply plugin: 'cobertura'
+//apply plugin: 'cobertura'
+apply plugin: "jacoco"
 apply plugin: 'com.github.kt3k.coveralls'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven-publish'
 
-cobertura.coverageFormats = ['html', 'xml'] // coveralls plugin depends on xml format report
-cobertura.coverageSourceDirs = sourceSets.main.groovy.srcDirs
+//cobertura.coverageFormats = ['html', 'xml'] // coveralls plugin depends on xml format report
+//cobertura.coverageSourceDirs = sourceSets.main.groovy.srcDirs
 
 repositories {
     jcenter()
@@ -29,8 +35,42 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-compileGroovy {
-    options.fork = true
-    options.forkOptions.executable = "javac"
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allGroovy
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+            groupId 'com.github.scottg489'
+            artifactId 'unified-diff-parser'
+            version "0.${ENV['SNAP_PIPELINE_COUNTER']}"
+            artifact sourceJar {
+                classifier "sources"
+            }
+        }
+    }
+}
+bintray {
+    user = "${ENV['BINTRAY_USER']}"
+    key = "${ENV['BINTRAY_KEY']}"
+    pkg {
+        repo = 'maven'
+        name = 'unified-diff-parser'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'git@github.com:ScottG489/unified-diff-parser.git'
+        version {
+            name = '0.1-alpha'
+        }
+    }
+    publications = ['MyPublication']
+    publish = true
+}

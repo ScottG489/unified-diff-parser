@@ -1,11 +1,7 @@
 language: groovy
-
 env:
   global:
-    # COVERITY_SCAN_TOKEN
-    # ** specific to your project **
-    - secure: "XabE5vlRY6yV5JvKgg3z6U08yDe5uGEBiNO/mJE7KpfLkm6Qf2E2G9A4n69gvs9Gydx1I4FMH5+zxTh3EZqKDI7MGuay7FZ1Qh0FJQJUYWMiBbp2+zIFnZQDTq74IWIzo0tXzcMjnq/MAz2gbQFETu8ejy9jnqqBwvZfhXXUX8FV+0lWTJtNZPiZGyzg3R2rcc2NW8LpvFQQtbBPH4xZYMPw/8tBT43tCp0lYGwsljqNod9hvuv5wsK+VYPe7rVzenuqIGd1QSHnVf2CBkVJOhB2tjwUHBKE+o4t5jwR5KIthyKjIcQh4N9Jq+tScQbCUlXIMc1MqdXkrMyfkhpldRlJtNv7gdNoRyPd4nMTnSQYwGhhe9CJt/luMQbU6JlBMDZrOyOCW7CONuuRI/s7REalGDKfdBWQ3D/TEdi+902pgGJMKHCugv0w5bXs1fA88PtW/vZ/MlOQcA+ynXt5nsTDTESfYMXbiW+Pwd4kYTRGaVCg+6Ih1CaiQtLb2oYBsIyUQ8zj4nHeoaTxOWRIQZFIQRUF1GswQGu/3H+7cQZT38cHRHlYC7Y5AWbFrfEU6ej6av/SKkuEJEwNoURjppot9oaRa+B3otmofdh7iR+mqDt6WAoLUNhsDu/pHKDYAuEuxr/9lXvsT3B1lNghbnnoHhEoQEECVkEz1tJ1gpA="
-
+  - secure: XabE5vlRY6yV5JvKgg3z6U08yDe5uGEBiNO/mJE7KpfLkm6Qf2E2G9A4n69gvs9Gydx1I4FMH5+zxTh3EZqKDI7MGuay7FZ1Qh0FJQJUYWMiBbp2+zIFnZQDTq74IWIzo0tXzcMjnq/MAz2gbQFETu8ejy9jnqqBwvZfhXXUX8FV+0lWTJtNZPiZGyzg3R2rcc2NW8LpvFQQtbBPH4xZYMPw/8tBT43tCp0lYGwsljqNod9hvuv5wsK+VYPe7rVzenuqIGd1QSHnVf2CBkVJOhB2tjwUHBKE+o4t5jwR5KIthyKjIcQh4N9Jq+tScQbCUlXIMc1MqdXkrMyfkhpldRlJtNv7gdNoRyPd4nMTnSQYwGhhe9CJt/luMQbU6JlBMDZrOyOCW7CONuuRI/s7REalGDKfdBWQ3D/TEdi+902pgGJMKHCugv0w5bXs1fA88PtW/vZ/MlOQcA+ynXt5nsTDTESfYMXbiW+Pwd4kYTRGaVCg+6Ih1CaiQtLb2oYBsIyUQ8zj4nHeoaTxOWRIQZFIQRUF1GswQGu/3H+7cQZT38cHRHlYC7Y5AWbFrfEU6ej6av/SKkuEJEwNoURjppot9oaRa+B3otmofdh7iR+mqDt6WAoLUNhsDu/pHKDYAuEuxr/9lXvsT3B1lNghbnnoHhEoQEECVkEz1tJ1gpA=
 addons:
   code_climate:
     repo_token: 2cd4295a4d8f97736951fdb38a5529b985466b7cfcc00ba845983e6a8a66d7c7
@@ -13,9 +9,13 @@ addons:
     project:
       name: ScottG489/unified-diff-parser
     notification_email: scottg489@gmail.com
-    build_command_prepend: ./gradlew clean
-    build_command: ./gradlew compileGroovy
+    build_command_prepend: "./gradlew clean"
+    build_command: "./gradlew compileGroovy bintrayUpload"
     branch_pattern: master
-
 after_success:
-- ./gradlew cobertura coveralls
+  - "./gradlew cobertura coveralls"
+deploy:
+  provider: script
+  script: "gradlew bintrayUpload"
+  on:
+    branch: master
