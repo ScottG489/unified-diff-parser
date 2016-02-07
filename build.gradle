@@ -13,13 +13,14 @@ buildscript {
 }
 apply plugin: 'groovy'
 apply plugin: 'idea'
-apply plugin: 'cobertura'
+//apply plugin: 'cobertura'
+apply plugin: "jacoco"
 apply plugin: 'com.github.kt3k.coveralls'
 apply plugin: 'com.jfrog.bintray'
 apply plugin: 'maven-publish'
 
-cobertura.coverageFormats = ['html', 'xml'] // coveralls plugin depends on xml format report
-cobertura.coverageSourceDirs = sourceSets.main.groovy.srcDirs
+//cobertura.coverageFormats = ['html', 'xml'] // coveralls plugin depends on xml format report
+//cobertura.coverageSourceDirs = sourceSets.main.groovy.srcDirs
 
 repositories {
     jcenter()
@@ -37,6 +38,13 @@ dependencies {
 compileGroovy {
     options.fork = true
     options.forkOptions.executable = "javac"
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
 }
 
 publishing {
