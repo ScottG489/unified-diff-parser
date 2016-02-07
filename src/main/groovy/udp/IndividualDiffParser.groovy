@@ -1,6 +1,8 @@
 package udp
 
 import rdglp.node.ParserNode
+import rdglp.parse.LineParser
+import rdglp.parse.RegexDirectedGraphLineParser
 import rdglp.strategy.util.StrategyHelper
 
 class IndividualDiffParser {
@@ -31,7 +33,7 @@ class IndividualDiffParser {
 
     private UnifiedDiff parseUnifiedDiff(String parsableLines) {
         LineParser<UnifiedDiff> lineParser =
-                new LineParser<UnifiedDiff>(unifiedDiff, getNodeTree());
+                new RegexDirectedGraphLineParser<UnifiedDiff>(unifiedDiff, getNodeTree());
         unifiedDiff = lineParser.parse(parsableLines)
     }
 
