@@ -2,8 +2,7 @@ package udp
 
 import rdglp.node.ParserNode
 import rdglp.strategy.LineHandlingStrategy
-
-import java.util.regex.Matcher
+import rdglp.strategy.util.StrategyHelper
 
 class IndividualDiffParser extends LineParser {
     private UnifiedDiff unifiedDiff
@@ -30,6 +29,7 @@ class IndividualDiffParser extends LineParser {
     // TODO: Inconsistency between added/deleted text and binary files:
     // TODO:        Text: To/From file respectively is '/dev/null' along with file being added/deleted
     // TODO:        Binary: To/From file respectively are both the same
+    @Override
     UnifiedDiff parse(String lineParsable) {
         unifiedDiff = new UnifiedDiff(lineParsable)
         // TODO: Initialize as modified, will be overridden if otherwise.
@@ -42,29 +42,21 @@ class IndividualDiffParser extends LineParser {
         // TODO:    currently needed because it's called recursively.
         parseWithNodeTree(lineIter, [getNodeTree()].toSet())
 
-
         // TODO: Get the to and from file names from the first line as a last ditch effort
         // TODO: This is 'diff' specific and may be something preventing this from becoming a
         // TODO:    general purpose line parsing util.
         if (unifiedDiff.getFromFile() == null) {
-            unifiedDiff.setFromFile(extractFromFileFromFirstLine())
+
+            unifiedDiff.setFromFile(StrategyHelper.extractDataFromLine(
+                    unifiedDiff.getRawDiff(), LineExpression.DIFF_GIT, 1
+            ))
         }
         if (unifiedDiff.getToFile() == null) {
-            unifiedDiff.setToFile(extractToFileFromFirstLine())
+            unifiedDiff.setToFile(StrategyHelper.extractDataFromLine(
+                    unifiedDiff.getRawDiff(), LineExpression.DIFF_GIT, 1
+            ))
         }
         return unifiedDiff
-    }
-
-    private String extractFromFileFromFirstLine() {
-        Matcher m = LineExpression.DIFF_GIT.matcher(unifiedDiff.getRawDiff())
-        m.find()
-        return m.group(1)
-    }
-
-    private String extractToFileFromFirstLine() {
-        Matcher m = LineExpression.DIFF_GIT.matcher(unifiedDiff.getRawDiff())
-        m.find()
-        return m.group(2)
     }
 
     ParserNode getNodeTree() {
