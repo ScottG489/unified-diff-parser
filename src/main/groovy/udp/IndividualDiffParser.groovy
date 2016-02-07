@@ -21,15 +21,29 @@ class IndividualDiffParser {
         // TODO: This will likely be set incorrectly for certain binary file statuses
         // TODO:    since we don't currently have detection on all of them for binaries
         unifiedDiff.setFileStatus(UnifiedDiff.FileStatus.Modified)
+
+        parseUnifiedDiff(parsableLines)
+
+        setFileNamesIfNecessary(unifiedDiff)
+
+        return unifiedDiff
+    }
+
+    private UnifiedDiff parseUnifiedDiff(String parsableLines) {
         LineParser<UnifiedDiff> lineParser =
                 new LineParser<UnifiedDiff>(unifiedDiff, getNodeTree());
         unifiedDiff = lineParser.parse(parsableLines)
+    }
 
-        // TODO: Get the to and from file names from the first line as a last ditch effort
-        // TODO: This is 'diff' specific and may be something preventing this from becoming a
-        // TODO:    general purpose line parsing util.
+    ParserNode getNodeTree() {
+        return firstNode
+    }
+
+    // TODO: Get the to and from file names from the first line as a last ditch effort
+    // TODO: This is 'diff' specific and may be something preventing this from becoming a
+    // TODO:    general purpose line parsing util.
+    private static void setFileNamesIfNecessary(UnifiedDiff unifiedDiff) {
         if (unifiedDiff.getFromFile() == null) {
-
             unifiedDiff.setFromFile(StrategyHelper.extractDataFromLine(
                     unifiedDiff.getRawDiff(), LineExpression.DIFF_GIT, 1
             ))
@@ -39,11 +53,6 @@ class IndividualDiffParser {
                     unifiedDiff.getRawDiff(), LineExpression.DIFF_GIT, 1
             ))
         }
-        return unifiedDiff
-    }
-
-    ParserNode getNodeTree() {
-        return firstNode
     }
 }
 
