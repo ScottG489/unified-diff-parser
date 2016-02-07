@@ -72,9 +72,10 @@ bintray {
         name = 'unified-diff-parser'
         licenses = ['Apache-2.0']
         vcsUrl = 'git@github.com:ScottG489/unified-diff-parser.git'
-       version {
+        version {
             name = '0.1-alpha'
         }
     }
     publications = ['MyPublication']
+    publish = true
 }
