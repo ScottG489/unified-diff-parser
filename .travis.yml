@@ -14,8 +14,8 @@ addons:
     branch_pattern: master
 after_success:
   - "./gradlew cobertura coveralls"
-deploy:
-  provider: script
-  script: "gradlew bintrayUpload"
-  on:
-    branch: master
+#deploy:
+#  provider: script
+#  script: "gradlew bintrayUpload"
+#  on:
+#    branch: master
