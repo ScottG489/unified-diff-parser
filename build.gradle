@@ -47,13 +47,20 @@ jacocoTestReport {
     }
 }
 
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+}
+
 publishing {
     publications {
         MyPublication(MavenPublication) {
             from components.java
-            groupId 'udp'
+            groupId 'com.github.scottg489'
             artifactId 'unified-diff-parser'
             version "0.${ENV['SNAP_PIPELINE_COUNTER']}"
+            artifact sourceJar {
+                classifier "sources"
+            }
         }
     }
 }
