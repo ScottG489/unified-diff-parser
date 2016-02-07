@@ -24,9 +24,6 @@ apply plugin: 'maven-publish'
 
 repositories {
     jcenter()
-    maven {
-        url  "http://dl.bintray.com/scottg489/maven"
-    }
 }
 
 dependencies {
