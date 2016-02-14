@@ -1,8 +1,10 @@
-package udp
+package udp.parse
 
 import rdglp.config.ConfigParser
 import rdglp.node.ParserNode
 import spock.lang.Specification
+import udp.parse.UnifiedDiff
+import udp.parse.UnifiedDiffParser
 
 // TODO: Use a template diff instead of static files?
 class UnifiedDiffParserTest extends Specification {
@@ -219,7 +221,7 @@ class UnifiedDiffParserTest extends Specification {
     private static UnifiedDiffParser getUdpFromResource() {
         ConfigParser configParser = ConfigParser.getInstance()
         // TODO: Bad hard coded values
-        InputStream config = new FileInputStream("src/test/resources/udp/config/diff_test.json")
+        InputStream config = new FileInputStream("src/test/resources/udp/parse/diff_test.json")
         ParserNode firstNode = configParser.generateParserConfig(config).get('diffGitNode')
         return new UnifiedDiffParser(firstNode)
     }

@@ -1,4 +1,4 @@
-package udp
+package udp.parse
 
 class UnifiedDiff {
     private String rawDiff

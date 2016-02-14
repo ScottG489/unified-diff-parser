@@ -1,7 +1,7 @@
 package udp.strategy
 
 import rdglp.strategy.LineHandlingStrategy
-import udp.UnifiedDiff
+import udp.parse.UnifiedDiff
 
 class GitBinaryStrategy implements LineHandlingStrategy {
     @Override

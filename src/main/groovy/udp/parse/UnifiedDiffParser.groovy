@@ -1,4 +1,4 @@
-package udp
+package udp.parse
 
 import rdglp.node.ParserNode
 
