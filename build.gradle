@@ -29,7 +29,6 @@ repositories {
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.4.4'
 
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.6.4'
     compile 'com.github.scottg489:regex-directed-graph-line-parser:0.10'
 
     testCompile 'org.spockframework:spock-core:1.0-groovy-2.4'
