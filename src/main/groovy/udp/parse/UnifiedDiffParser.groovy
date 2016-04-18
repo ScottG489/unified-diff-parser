@@ -38,6 +38,8 @@ class UnifiedDiffParser {
             pos = m.end() - offset
         }
 
+        // TODO: This incidentally adds single diffs as well. However, it will also add
+        // TODO:    a invalid patch, empty file, etc.
         // One at the end we still have to add
         rawDiffs.add(rawUnifiedDiff.substring(pos))
 
