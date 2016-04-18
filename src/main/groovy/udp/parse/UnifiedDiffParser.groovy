@@ -47,5 +47,9 @@ class UnifiedDiffParser {
     public List<UnifiedDiff> getUnifiedDiffs() {
         return unifiedDiffs;
     }
+
+    IndividualDiffParser getIndividualDiffParser() {
+        return parser
+    }
 }
 

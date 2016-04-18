@@ -4,7 +4,6 @@ import rdglp.config.ConfigParser
 import rdglp.node.ParserNode
 import udp.parse.UnifiedDiffParser
 
-// TODO: Needs tests
 @Singleton(strict = false)
 class UnifiedDiffParserCreator {
     private final InputStream DEFAULT_DIFF_PARSER_CONFIG
