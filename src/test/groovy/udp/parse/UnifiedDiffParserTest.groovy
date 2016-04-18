@@ -3,224 +3,63 @@ package udp.parse
 import rdglp.config.ConfigParser
 import rdglp.node.ParserNode
 import spock.lang.Specification
-import udp.parse.UnifiedDiff
-import udp.parse.UnifiedDiffParser
+import spock.lang.Unroll
+import udp.parse.UnifiedDiff.FileStatus
 
 // TODO: Use a template diff instead of static files?
 class UnifiedDiffParserTest extends Specification {
-    def "Diff of an added file should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('added.patch')
+    @Unroll
+    def "UnifiedDiff generated from the file '#patchFileResourceName' should have the specified properties"(
+            String patchFileResourceName,
+            int numberOfDiffs,
+            String fromFile,
+            String toFile,
+            FileStatus fileStatus,
+            boolean isBinary,
+            String checksumBefore,
+            String checksumAfter,
+            String oldMode,
+            String mode,
+            String similarityIndex) {
+        given:
+            String text = getTestResourceText(patchFileResourceName)
             UnifiedDiffParser udp = getUdpFromResource()
+
+        when:
             udp.parse(text)
             List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
             UnifiedDiff unifiedDiff = unifiedDiffs.first()
 
         then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('/dev/null')
-            unifiedDiff.getToFile().equals('.gitignore')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
-            unifiedDiff.isAddedFile()
-            !unifiedDiff.isModifiedFile()
-            !unifiedDiff.isRemovedFile()
-            !unifiedDiff.isRenamed()
-            !unifiedDiff.isCopied()
-            unifiedDiff.getMode().equals('100644')
+            unifiedDiffs.size() == numberOfDiffs
+            unifiedDiff.getFromFile().equals(fromFile)
+            unifiedDiff.getToFile().equals(toFile)
+            unifiedDiff.getFileStatus().equals(fileStatus)
+            isStatusOnlyTrueFor(fileStatus, unifiedDiff)
+            unifiedDiff.isBinary() == isBinary
+            unifiedDiff.getChecksumBefore().equals(checksumBefore)
+            unifiedDiff.getChecksumAfter().equals(checksumAfter)
+            unifiedDiff.getOldMode() == oldMode
+            unifiedDiff.getMode().equals(mode)
+            unifiedDiff.getSimilarityIndex().equals(similarityIndex)
+
+            // TODO: How do I address the excessive width of this data table?
+            // TODO: Do we want oldMode to be null if it hasn't changed or be the same as mode?
+        where:
+            patchFileResourceName                     | numberOfDiffs | fromFile             | toFile                      | fileStatus          | isBinary | checksumBefore                             | checksumAfter                              | oldMode  | mode     | similarityIndex
+            'added.patch'                             | 1             | '/dev/null'          | '.gitignore'                | FileStatus.Added    | false    | '0000000'                                  | 'd490e8e'                                  | null     | '100644' | null
+            'added_binary.patch'                      | 1             | '/dev/null'          | 'doc/doxygen/html/bc_s.png' | FileStatus.Added    | true     | '0000000'                                  | 'e401862'                                  | null     | '100644' | null
+            'added_empty.patch'                       | 1             | 'doc/sphinx/keyfile' | 'doc/sphinx/keyfile'        | FileStatus.Added    | false    | '0000000'                                  | 'e69de29'                                  | null     | '100644' | null
+            'removed.patch'                           | 1             | 'task.py'            | '/dev/null'                 | FileStatus.Removed  | false    | '70e053b'                                  | '0000000'                                  | null     | '100644' | null
+            'mode_change.patch'                       | 1             | 'a'                  | 'a'                         | FileStatus.Modified | false    | null                                       | null                                       | '100644' | '100755' | null
+            'rename_similarity_index.patch'           | 1             | 'a'                  | 'b'                         | FileStatus.Renamed  | false    | null                                       | null                                       | null     | null     | '100%'
+            'copy_similarity_index.patch'             | 1             | 'a'                  | 'b'                         | FileStatus.Copied   | false    | null                                       | null                                       | null     | null     | '100%'
+            'modified.patch'                          | 1             | 'a'                  | 'a'                         | FileStatus.Modified | false    | '5c31be7'                                  | '45cfaf4'                                  | null     | '100644' | null
+            'modified_mode_change.patch'              | 1             | 'a'                  | 'a'                         | FileStatus.Modified | false    | '5c31be7'                                  | '38e4da5'                                  | '100644' | '100755' | null
+            'added_binary_literal.patch'              | 1             | 'bar'                | 'bar'                       | FileStatus.Modified | true     | '78981922613b2afb6025042ff6bd878ac1994e85' | '0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17' | null     | '100755' | null
+            'rename_binary_literal_mode_change.patch' | 1             | 'foo'                | 'boo'                       | FileStatus.Renamed  | true     | 'b8bd059ec9968339eddf762411b39ece50f78e3e' | 'ba300ede17a9e96ff8bbac6fb9250e18a9d69bea' | '100644' | '100755' | '99%'
+            'multi.patch'                             | 3             | '/dev/null'          | '.gitignore'                | FileStatus.Added    | false    | '0000000'                                  | 'd490e8e'                                  | null     | '100644' | null
     }
-
-    def "Diff of an added binary file should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('added_binary.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('/dev/null')
-            unifiedDiff.getToFile().equals('doc/doxygen/html/bc_s.png')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
-            unifiedDiff.isAddedFile()
-            unifiedDiff.isBinary()
-            unifiedDiff.getMode().equals('100644')
-    }
-
-    def "Diff of an added empty file should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('added_empty.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('doc/sphinx/keyfile')
-            unifiedDiff.getToFile().equals('doc/sphinx/keyfile')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
-            unifiedDiff.isAddedFile()
-            unifiedDiff.getMode().equals('100644')
-    }
-
-    def "Diff of a removed file should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('removed.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('task.py')
-            unifiedDiff.getToFile().equals('/dev/null')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Removed)
-            unifiedDiff.isRemovedFile()
-            unifiedDiff.getMode().equals('100644')
-    }
-
-    def "Diff of a file with changed permissions should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('mode_change.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('a')
-            unifiedDiff.getToFile().equals('a')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
-            unifiedDiff.isModifiedFile()
-            unifiedDiff.getOldMode().equals('100644')
-            unifiedDiff.getMode().equals('100755')
-    }
-
-    def "Diff of a renamed file with a similarity index should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('rename_similarity_index.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('a')
-            unifiedDiff.getToFile().equals('b')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Renamed)
-            unifiedDiff.isRenamed()
-            unifiedDiff.getSimilarityIndex().equals('100%')
-    }
-
-    def "Diff of a copied file with a similarity index should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('copy_similarity_index.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('a')
-            unifiedDiff.getToFile().equals('b')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Copied)
-            unifiedDiff.isCopied()
-            unifiedDiff.getSimilarityIndex().equals('100%')
-    }
-
-    def "Diff of a modified file should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('modified.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('a')
-            unifiedDiff.getToFile().equals('a')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
-            unifiedDiff.isModifiedFile()
-            unifiedDiff.getChecksumBefore().equals("5c31be7")
-            unifiedDiff.getChecksumAfter().equals("45cfaf4")
-            unifiedDiff.getMode().equals("100644")
-    }
-
-    def "Diff of a modified and mode changed file should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('modified_mode_change.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiffs.size() == 1
-            unifiedDiff.getFromFile().equals('a')
-            unifiedDiff.getToFile().equals('a')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Modified)
-            unifiedDiff.isModifiedFile()
-            unifiedDiff.getChecksumBefore().equals("5c31be7")
-            unifiedDiff.getChecksumAfter().equals("38e4da5")
-            unifiedDiff.getOldMode().equals("100644")
-            unifiedDiff.getMode().equals("100755")
-    }
-
-    def "Diff with GIT binary patch line should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('added_binary_literal.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiff.getFromFile().equals('bar')
-            unifiedDiff.getToFile().equals('bar')
-            unifiedDiff.isBinary()
-            unifiedDiff.getMode().equals('100755')
-            unifiedDiff.getChecksumBefore().equals('78981922613b2afb6025042ff6bd878ac1994e85')
-            unifiedDiff.getChecksumAfter().equals('0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17')
-    }
-
-    def "Diff of a renamed binary file that was modified and had it's mode changed should have appropriate attributes"() {
-        when:
-            String text = getTestResourceText('rename_binary_literal_mode_change.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-            UnifiedDiff unifiedDiff = unifiedDiffs.first()
-
-        then:
-            unifiedDiff.getFromFile().equals('foo')
-            unifiedDiff.getToFile().equals('boo')
-            unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Renamed)
-            unifiedDiff.isRenamed()
-            unifiedDiff.isBinary()
-            unifiedDiff.getOldMode().equals('100644')
-            unifiedDiff.getMode().equals('100755')
-            unifiedDiff.getSimilarityIndex().equals('99%')
-            unifiedDiff.getChecksumBefore().equals('b8bd059ec9968339eddf762411b39ece50f78e3e')
-            unifiedDiff.getChecksumAfter().equals('ba300ede17a9e96ff8bbac6fb9250e18a9d69bea')
-    }
-
-    def "Diff with 3 files in it should have a size of 3"() {
-        when:
-            String text = getTestResourceText('multi.patch')
-            UnifiedDiffParser udp = getUdpFromResource()
-            udp.parse(text)
-            List<UnifiedDiff> unifiedDiffs = udp.getUnifiedDiffs()
-
-        then:
-            unifiedDiffs.size() == 3
-    }
-
 
     private static UnifiedDiffParser getUdpFromResource() {
         ConfigParser configParser = ConfigParser.getInstance()
@@ -232,5 +71,56 @@ class UnifiedDiffParserTest extends Specification {
 
     private static String getTestResourceText(String fileName) {
         return UnifiedDiffParser.getResource(fileName).getText()
+    }
+
+    // TODO: This is a result of me not wanting to make the above data table too wide
+    // TODO:    and wanting to get coverage on is<Status>File method calls. The data
+    // TODO:    table even now is too long. Is there a way to make it shorter?
+    private static boolean isStatusOnlyTrueFor(
+            FileStatus onlyTrueStatus, UnifiedDiff unifiedDiff) {
+        HashMap<FileStatus, Boolean> statuses = getTrueStatusFor(onlyTrueStatus)
+        for (Map.Entry<FileStatus, Boolean> entry : statuses) {
+            switch (entry.getKey()) {
+                case FileStatus.Added:
+                    if (unifiedDiff.isAddedFile() != entry.getValue()) {
+                        return false
+                    }
+                    break
+                case FileStatus.Removed:
+                    if (unifiedDiff.isRemovedFile() != entry.getValue()) {
+                        return false
+                    }
+                    break
+                case FileStatus.Modified:
+                    if (unifiedDiff.isModifiedFile() != entry.getValue()) {
+                        return false
+                    }
+                    break
+                case FileStatus.Copied:
+                    if (unifiedDiff.isCopied() != entry.getValue()) {
+                        return false
+                    }
+                    break
+                case FileStatus.Renamed:
+                    if (unifiedDiff.isRenamed() != entry.getValue()) {
+                        return false
+                    }
+                    break
+            }
+        }
+
+        return true
+    }
+
+    private static HashMap getTrueStatusFor(FileStatus status) {
+        HashMap<FileStatus, Boolean> statusMap = new HashMap<>()
+        statusMap.put(FileStatus.Added, false)
+        statusMap.put(FileStatus.Removed, false)
+        statusMap.put(FileStatus.Modified, false)
+        statusMap.put(FileStatus.Copied, false)
+        statusMap.put(FileStatus.Renamed, false)
+        statusMap.put(status, true)
+
+        return statusMap
     }
 }
