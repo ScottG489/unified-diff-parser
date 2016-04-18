@@ -22,6 +22,10 @@ class UnifiedDiffParserTest extends Specification {
             unifiedDiff.getToFile().equals('.gitignore')
             unifiedDiff.getFileStatus().equals(UnifiedDiff.FileStatus.Added)
             unifiedDiff.isAddedFile()
+            !unifiedDiff.isModifiedFile()
+            !unifiedDiff.isRemovedFile()
+            !unifiedDiff.isRenamed()
+            !unifiedDiff.isCopied()
             unifiedDiff.getMode().equals('100644')
     }
 
