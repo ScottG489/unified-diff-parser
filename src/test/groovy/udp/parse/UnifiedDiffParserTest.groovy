@@ -9,18 +9,10 @@ import udp.parse.UnifiedDiff.FileStatus
 // TODO: Use a template diff instead of static files?
 class UnifiedDiffParserTest extends Specification {
     @Unroll
-    def "UnifiedDiff generated from the file '#patchFileResourceName' should have the specified properties"(
+    def "UnifiedDiff generated from the file '#patchFileResourceName' should have the same fields as the expected UnifiedDiff"(
             String patchFileResourceName,
             int numberOfDiffs,
-            String fromFile,
-            String toFile,
-            FileStatus fileStatus,
-            boolean isBinary,
-            String checksumBefore,
-            String checksumAfter,
-            String oldMode,
-            String mode,
-            String similarityIndex) {
+            UnifiedDiff expectedUnifiedDiff) {
         given:
             String text = getTestResourceText(patchFileResourceName)
             UnifiedDiffParser udp = getUdpFromResource()
@@ -32,33 +24,203 @@ class UnifiedDiffParserTest extends Specification {
 
         then:
             unifiedDiffs.size() == numberOfDiffs
-            unifiedDiff.getFromFile().equals(fromFile)
-            unifiedDiff.getToFile().equals(toFile)
-            unifiedDiff.getFileStatus().equals(fileStatus)
-            isStatusOnlyTrueFor(fileStatus, unifiedDiff)
-            unifiedDiff.isBinary() == isBinary
-            unifiedDiff.getChecksumBefore().equals(checksumBefore)
-            unifiedDiff.getChecksumAfter().equals(checksumAfter)
-            unifiedDiff.getOldMode() == oldMode
-            unifiedDiff.getMode().equals(mode)
-            unifiedDiff.getSimilarityIndex().equals(similarityIndex)
+            unifiedDiff.getFromFile().equals(expectedUnifiedDiff.getFromFile())
+            unifiedDiff.getToFile().equals(expectedUnifiedDiff.getToFile())
+            unifiedDiff.getFileStatus().equals(expectedUnifiedDiff.getFileStatus())
+            unifiedDiff.isAddedFile() == expectedUnifiedDiff.isAddedFile()
+            unifiedDiff.isRemovedFile() == expectedUnifiedDiff.isRemovedFile()
+            unifiedDiff.isModifiedFile() == expectedUnifiedDiff.isModifiedFile()
+            unifiedDiff.isCopied() == expectedUnifiedDiff.isCopied()
+            unifiedDiff.isRenamed() == expectedUnifiedDiff.isRenamed()
+            unifiedDiff.isBinary() == expectedUnifiedDiff.isBinary()
+            unifiedDiff.getChecksumBefore().equals(expectedUnifiedDiff.getChecksumBefore())
+            unifiedDiff.getChecksumAfter().equals(expectedUnifiedDiff.getChecksumAfter())
+            unifiedDiff.getOldMode().equals(expectedUnifiedDiff.getOldMode())
+            unifiedDiff.getMode().equals(expectedUnifiedDiff.getMode())
+            unifiedDiff.getSimilarityIndex().equals(expectedUnifiedDiff.getSimilarityIndex())
 
-            // TODO: How do I address the excessive width of this data table?
-            // TODO: Do we want oldMode to be null if it hasn't changed or be the same as mode?
         where:
-            patchFileResourceName                     | numberOfDiffs | fromFile             | toFile                      | fileStatus          | isBinary | checksumBefore                             | checksumAfter                              | oldMode  | mode     | similarityIndex
-            'added.patch'                             | 1             | '/dev/null'          | '.gitignore'                | FileStatus.Added    | false    | '0000000'                                  | 'd490e8e'                                  | null     | '100644' | null
-            'added_binary.patch'                      | 1             | '/dev/null'          | 'doc/doxygen/html/bc_s.png' | FileStatus.Added    | true     | '0000000'                                  | 'e401862'                                  | null     | '100644' | null
-            'added_empty.patch'                       | 1             | 'doc/sphinx/keyfile' | 'doc/sphinx/keyfile'        | FileStatus.Added    | false    | '0000000'                                  | 'e69de29'                                  | null     | '100644' | null
-            'removed.patch'                           | 1             | 'task.py'            | '/dev/null'                 | FileStatus.Removed  | false    | '70e053b'                                  | '0000000'                                  | null     | '100644' | null
-            'mode_change.patch'                       | 1             | 'a'                  | 'a'                         | FileStatus.Modified | false    | null                                       | null                                       | '100644' | '100755' | null
-            'rename_similarity_index.patch'           | 1             | 'a'                  | 'b'                         | FileStatus.Renamed  | false    | null                                       | null                                       | null     | null     | '100%'
-            'copy_similarity_index.patch'             | 1             | 'a'                  | 'b'                         | FileStatus.Copied   | false    | null                                       | null                                       | null     | null     | '100%'
-            'modified.patch'                          | 1             | 'a'                  | 'a'                         | FileStatus.Modified | false    | '5c31be7'                                  | '45cfaf4'                                  | null     | '100644' | null
-            'modified_mode_change.patch'              | 1             | 'a'                  | 'a'                         | FileStatus.Modified | false    | '5c31be7'                                  | '38e4da5'                                  | '100644' | '100755' | null
-            'added_binary_literal.patch'              | 1             | 'bar'                | 'bar'                       | FileStatus.Modified | true     | '78981922613b2afb6025042ff6bd878ac1994e85' | '0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17' | null     | '100755' | null
-            'rename_binary_literal_mode_change.patch' | 1             | 'foo'                | 'boo'                       | FileStatus.Renamed  | true     | 'b8bd059ec9968339eddf762411b39ece50f78e3e' | 'ba300ede17a9e96ff8bbac6fb9250e18a9d69bea' | '100644' | '100755' | '99%'
-            'multi.patch'                             | 3             | '/dev/null'          | '.gitignore'                | FileStatus.Added    | false    | '0000000'                                  | 'd490e8e'                                  | null     | '100644' | null
+            patchFileResourceName                     | numberOfDiffs | expectedUnifiedDiff
+            'added.patch'                             | 1             | getExpectedAddedUnifiedDiff()
+            'added_binary.patch'                      | 1             | getExpectedAddedBinaryUnifiedDiff()
+            'added_empty.patch'                       | 1             | getExpectedAddedEmptyUnifiedDiff()
+            'removed.patch'                           | 1             | getExpectedRemovedUnifiedDiff()
+            'mode_change.patch'                       | 1             | getExpectedModeChangeUnifiedDiff()
+            'rename_similarity_index.patch'           | 1             | getExpectedRenameSimilarityIndexUnifiedDiff()
+            'copy_similarity_index.patch'             | 1             | getExpectedCopySimilarityIndexUnifiedDiff()
+            'modified.patch'                          | 1             | getExpectedModifiedUnifiedDiff()
+            'modified_mode_change.patch'              | 1             | getExpectedModifiedModeChangeUnifiedDiff()
+            'added_binary_literal.patch'              | 1             | getExpectedAddedBinaryLiteralUnifiedDiff()
+            'rename_binary_literal_mode_change.patch' | 1             | getExpectedRenameBinaryLiteralModeChangeUnifiedDiff()
+            'multi.patch'                             | 3             | getExpectedMultiUnifiedDiff()
+    }
+
+    UnifiedDiff getExpectedAddedUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('/dev/null')
+        expectedUnifiedDiff.setToFile('.gitignore')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Added)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('0000000')
+        expectedUnifiedDiff.setChecksumAfter('d490e8e')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedAddedBinaryUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('/dev/null')
+        expectedUnifiedDiff.setToFile('doc/doxygen/html/bc_s.png')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Added)
+        expectedUnifiedDiff.setIsBinary(true)
+        expectedUnifiedDiff.setChecksumBefore('0000000')
+        expectedUnifiedDiff.setChecksumAfter('e401862')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedAddedEmptyUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('doc/sphinx/keyfile')
+        expectedUnifiedDiff.setToFile('doc/sphinx/keyfile')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Added)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('0000000')
+        expectedUnifiedDiff.setChecksumAfter('e69de29')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedRemovedUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('task.py')
+        expectedUnifiedDiff.setToFile('/dev/null')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Removed)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('70e053b')
+        expectedUnifiedDiff.setChecksumAfter('0000000')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedModeChangeUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('a')
+        expectedUnifiedDiff.setToFile('a')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Modified)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore(null)
+        expectedUnifiedDiff.setChecksumAfter(null)
+        expectedUnifiedDiff.setOldMode('100644')
+        expectedUnifiedDiff.setMode('100755')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedRenameSimilarityIndexUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('a')
+        expectedUnifiedDiff.setToFile('b')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Renamed)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore(null)
+        expectedUnifiedDiff.setChecksumAfter(null)
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode(null)
+        expectedUnifiedDiff.setSimilarityIndex('100%')
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedCopySimilarityIndexUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('a')
+        expectedUnifiedDiff.setToFile('b')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Copied)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore(null)
+        expectedUnifiedDiff.setChecksumAfter(null)
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode(null)
+        expectedUnifiedDiff.setSimilarityIndex('100%')
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedModifiedUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('a')
+        expectedUnifiedDiff.setToFile('a')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Modified)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('5c31be7')
+        expectedUnifiedDiff.setChecksumAfter('45cfaf4')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedModifiedModeChangeUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('a')
+        expectedUnifiedDiff.setToFile('a')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Modified)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('5c31be7')
+        expectedUnifiedDiff.setChecksumAfter('38e4da5')
+        expectedUnifiedDiff.setOldMode('100644')
+        expectedUnifiedDiff.setMode('100755')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedAddedBinaryLiteralUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('bar')
+        expectedUnifiedDiff.setToFile('bar')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Modified)
+        expectedUnifiedDiff.setIsBinary(true)
+        expectedUnifiedDiff.setChecksumBefore('78981922613b2afb6025042ff6bd878ac1994e85')
+        expectedUnifiedDiff.setChecksumAfter('0b8a5ce4e558f9bd5c6f5d1855ff2504a4df9e17')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100755')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedRenameBinaryLiteralModeChangeUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('foo')
+        expectedUnifiedDiff.setToFile('boo')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Renamed)
+        expectedUnifiedDiff.setIsBinary(true)
+        expectedUnifiedDiff.setChecksumBefore('b8bd059ec9968339eddf762411b39ece50f78e3e')
+        expectedUnifiedDiff.setChecksumAfter('ba300ede17a9e96ff8bbac6fb9250e18a9d69bea')
+        expectedUnifiedDiff.setOldMode('100644')
+        expectedUnifiedDiff.setMode('100755')
+        expectedUnifiedDiff.setSimilarityIndex('99%')
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedMultiUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('/dev/null')
+        expectedUnifiedDiff.setToFile('.gitignore')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Added)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('0000000')
+        expectedUnifiedDiff.setChecksumAfter('d490e8e')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        return expectedUnifiedDiff
     }
 
     private static UnifiedDiffParser getUdpFromResource() {
@@ -71,56 +233,5 @@ class UnifiedDiffParserTest extends Specification {
 
     private static String getTestResourceText(String fileName) {
         return UnifiedDiffParser.getResource(fileName).getText()
-    }
-
-    // TODO: This is a result of me not wanting to make the above data table too wide
-    // TODO:    and wanting to get coverage on is<Status>File method calls. The data
-    // TODO:    table even now is too long. Is there a way to make it shorter?
-    private static boolean isStatusOnlyTrueFor(
-            FileStatus onlyTrueStatus, UnifiedDiff unifiedDiff) {
-        HashMap<FileStatus, Boolean> statuses = getTrueStatusFor(onlyTrueStatus)
-        for (Map.Entry<FileStatus, Boolean> entry : statuses) {
-            switch (entry.getKey()) {
-                case FileStatus.Added:
-                    if (unifiedDiff.isAddedFile() != entry.getValue()) {
-                        return false
-                    }
-                    break
-                case FileStatus.Removed:
-                    if (unifiedDiff.isRemovedFile() != entry.getValue()) {
-                        return false
-                    }
-                    break
-                case FileStatus.Modified:
-                    if (unifiedDiff.isModifiedFile() != entry.getValue()) {
-                        return false
-                    }
-                    break
-                case FileStatus.Copied:
-                    if (unifiedDiff.isCopied() != entry.getValue()) {
-                        return false
-                    }
-                    break
-                case FileStatus.Renamed:
-                    if (unifiedDiff.isRenamed() != entry.getValue()) {
-                        return false
-                    }
-                    break
-            }
-        }
-
-        return true
-    }
-
-    private static HashMap getTrueStatusFor(FileStatus status) {
-        HashMap<FileStatus, Boolean> statusMap = new HashMap<>()
-        statusMap.put(FileStatus.Added, false)
-        statusMap.put(FileStatus.Removed, false)
-        statusMap.put(FileStatus.Modified, false)
-        statusMap.put(FileStatus.Copied, false)
-        statusMap.put(FileStatus.Renamed, false)
-        statusMap.put(status, true)
-
-        return statusMap
     }
 }
