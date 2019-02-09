@@ -3,6 +3,7 @@ build
 out
 atlassian-ide-plugin.xml
 
+.idea/
 *.iml
 *.ipr
 *.iws
