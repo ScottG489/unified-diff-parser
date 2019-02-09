@@ -6,6 +6,9 @@ import rdglp.parse.RegexDirectedGraphLineParser;
 import rdglp.strategy.util.StrategyHelper;
 
 public class IndividualDiffParser {
+    private UnifiedDiff unifiedDiff;
+    private ParserNode firstNode;
+    
     public IndividualDiffParser(ParserNode firstNode) {
         this.firstNode = firstNode;
     }
@@ -30,7 +33,7 @@ public class IndividualDiffParser {
 
     private UnifiedDiff parseUnifiedDiff(String parsableLines) {
         LineParser<UnifiedDiff> lineParser = new RegexDirectedGraphLineParser<UnifiedDiff>(unifiedDiff, getNodeTree());
-        return unifiedDiff = ((RegexDirectedGraphLineParser<UnifiedDiff>) lineParser).parse(parsableLines);
+        return unifiedDiff = lineParser.parse(parsableLines);
     }
 
     public ParserNode getNodeTree() {
@@ -42,15 +45,12 @@ public class IndividualDiffParser {
     // TODO:    general purpose line parsing util.
     private static void setFileNamesIfNecessary(UnifiedDiff unifiedDiff) {
         if (unifiedDiff.getFromFile() == null) {
-            unifiedDiff.setFromFile(StrategyHelper.extractDataFromLine(unifiedDiff.getRawDiff(), LineExpression.getDIFF_GIT(), 1));
+            unifiedDiff.setFromFile(StrategyHelper.extractDataFromLine(unifiedDiff.getRawDiff(), LineExpression.DIFF_GIT, 1));
         }
 
         if (unifiedDiff.getToFile() == null) {
-            unifiedDiff.setToFile(StrategyHelper.extractDataFromLine(unifiedDiff.getRawDiff(), LineExpression.getDIFF_GIT(), 1));
+            unifiedDiff.setToFile(StrategyHelper.extractDataFromLine(unifiedDiff.getRawDiff(), LineExpression.DIFF_GIT, 1));
         }
 
     }
-
-    private UnifiedDiff unifiedDiff;
-    private ParserNode firstNode;
 }

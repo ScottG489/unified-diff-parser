@@ -8,6 +8,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class UnifiedDiffParser {
+    private List<UnifiedDiff> unifiedDiffs;
+    private String rawUnifiedDiff;
+    private IndividualDiffParser parser;
+
     public UnifiedDiffParser(ParserNode firstNode) {
         parser = new IndividualDiffParser(firstNode);
         this.unifiedDiffs = new ArrayList<UnifiedDiff>();
@@ -53,8 +57,4 @@ public class UnifiedDiffParser {
     public IndividualDiffParser getIndividualDiffParser() {
         return parser;
     }
-
-    private List<UnifiedDiff> unifiedDiffs;
-    private String rawUnifiedDiff;
-    private IndividualDiffParser parser;
 }

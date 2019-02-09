@@ -8,12 +8,11 @@ import udp.parse.UnifiedDiff;
 public class SimilarityIndexStrategy implements LineHandlingStrategy {
     @Override
     public void handle(String line, Object model) {
-        model = (UnifiedDiff) model;
         ((UnifiedDiff) model).setSimilarityIndex(extractSimilarityIndex(line));
     }
 
     private static String extractSimilarityIndex(String similarityIndexLine) {
-        return StrategyHelper.extractDataFromLine(similarityIndexLine, LineExpression.getSIMILARITY_INDEX(), 1);
+        return StrategyHelper.extractDataFromLine(similarityIndexLine, LineExpression.SIMILARITY_INDEX, 1);
     }
 
 }

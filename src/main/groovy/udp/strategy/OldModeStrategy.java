@@ -8,12 +8,11 @@ import udp.parse.UnifiedDiff;
 public class OldModeStrategy implements LineHandlingStrategy {
     @Override
     public void handle(String line, Object model) {
-        model = (UnifiedDiff) model;
         ((UnifiedDiff) model).setOldMode(extractOldMode(line));
     }
 
     private static String extractOldMode(String oldModeLine) {
-        return StrategyHelper.extractDataFromLine(oldModeLine, LineExpression.getOLD_MODE(), 1);
+        return StrategyHelper.extractDataFromLine(oldModeLine, LineExpression.OLD_MODE, 1);
     }
 
 }

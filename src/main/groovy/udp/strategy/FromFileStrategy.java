@@ -8,12 +8,11 @@ import udp.parse.UnifiedDiff;
 public class FromFileStrategy implements LineHandlingStrategy {
     @Override
     public void handle(String line, Object model) {
-        model = (UnifiedDiff) model;
         ((UnifiedDiff) model).setFromFile(extractFromFile(line));
     }
 
     private static String extractFromFile(String fromFileLine) {
-        return StrategyHelper.extractDataFromLine(fromFileLine, LineExpression.getFROM_FILE(), 2);
+        return StrategyHelper.extractDataFromLine(fromFileLine, LineExpression.FROM_FILE, 2);
     }
 
 }

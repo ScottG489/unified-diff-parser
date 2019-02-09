@@ -1,6 +1,22 @@
 package udp.parse;
 
 public class UnifiedDiff {
+    private String rawDiff;
+    private String fromFile;
+    private String toFile;
+    private FileStatus fileStatus;
+    private String mode;
+    private String oldMode;
+    private boolean isBinary;
+    private String similarityIndex;
+    private String dissimilarityIndex;
+    private String checksumBefore;
+    private String checksumAfter;
+
+    public enum FileStatus {
+        Added, Modified, Removed, Copied, Renamed;
+    }
+
     public UnifiedDiff(String rawDiff) {
         this.rawDiff = rawDiff;
     }
@@ -108,21 +124,5 @@ public class UnifiedDiff {
 
     public boolean isCopied() {
         return getFileStatus().equals(FileStatus.Copied);
-    }
-
-    private String rawDiff;
-    private String fromFile;
-    private String toFile;
-    private FileStatus fileStatus;
-    private String mode;
-    private String oldMode;
-    private boolean isBinary;
-    private String similarityIndex;
-    private String dissimilarityIndex;
-    private String checksumBefore;
-    private String checksumAfter;
-
-    public static enum FileStatus {
-        Added, Modified, Removed, Copied, Renamed;
     }
 }

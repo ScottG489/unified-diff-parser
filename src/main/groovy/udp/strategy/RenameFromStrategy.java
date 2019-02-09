@@ -8,13 +8,12 @@ import udp.parse.UnifiedDiff;
 public class RenameFromStrategy implements LineHandlingStrategy {
     @Override
     public void handle(String line, Object model) {
-        model = (UnifiedDiff) model;
         ((UnifiedDiff) model).setFileStatus(UnifiedDiff.FileStatus.Renamed);
         ((UnifiedDiff) model).setFromFile(extractRenameFrom(line));
     }
 
     private static String extractRenameFrom(String renameFromLine) {
-        return StrategyHelper.extractDataFromLine(renameFromLine, LineExpression.getRENAME_FROM(), 1);
+        return StrategyHelper.extractDataFromLine(renameFromLine, LineExpression.RENAME_FROM, 1);
     }
 
 }

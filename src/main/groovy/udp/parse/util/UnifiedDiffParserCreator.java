@@ -7,16 +7,14 @@ import udp.parse.UnifiedDiffParser;
 import java.io.InputStream;
 
 public class UnifiedDiffParserCreator {
+    private final ParserNode defaultNodeGraph;
+
     UnifiedDiffParserCreator() {
-        ConfigParser configParser = ConfigParser.getInstance();
-        DEFAULT_DIFF_PARSER_CONFIG = UnifiedDiffParserCreator.class.getResourceAsStream("diff_config.json");
-        DEFAULT_NODE_GRAPH = configParser.generateParserConfig(DEFAULT_DIFF_PARSER_CONFIG).get("diffGitNode");
+        InputStream defaultDiffParserConfig = UnifiedDiffParserCreator.class.getResourceAsStream("diff_config.json");
+        defaultNodeGraph = ConfigParser.generateParserConfig(defaultDiffParserConfig ).get("diffGitNode");
     }
 
     public UnifiedDiffParser create() {
-        return new UnifiedDiffParser(DEFAULT_NODE_GRAPH);
+        return new UnifiedDiffParser(defaultNodeGraph);
     }
-
-    private final InputStream DEFAULT_DIFF_PARSER_CONFIG;
-    private final ParserNode DEFAULT_NODE_GRAPH;
 }

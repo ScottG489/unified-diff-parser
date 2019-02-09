@@ -8,7 +8,6 @@ import udp.parse.UnifiedDiff;
 public class IndexStrategy implements LineHandlingStrategy {
     @Override
     public void handle(String line, Object model) {
-        model = (UnifiedDiff) model;
         ((UnifiedDiff) model).setChecksumBefore(extractChecksumBefore(line));
         ((UnifiedDiff) model).setChecksumAfter(extractChecksumAfter(line));
         // TODO: Only try to get the mode here if it hasn't changed
@@ -21,15 +20,15 @@ public class IndexStrategy implements LineHandlingStrategy {
     }
 
     private static String extractChecksumBefore(String indexLine) {
-        return StrategyHelper.extractDataFromLine(indexLine, LineExpression.getINDEX(), 1);
+        return StrategyHelper.extractDataFromLine(indexLine, LineExpression.INDEX, 1);
     }
 
     private static String extractChecksumAfter(String indexLine) {
-        return StrategyHelper.extractDataFromLine(indexLine, LineExpression.getINDEX(), 2);
+        return StrategyHelper.extractDataFromLine(indexLine, LineExpression.INDEX, 2);
     }
 
     private static String extractMode(String indexLine) {
-        return StrategyHelper.extractDataFromLine(indexLine, LineExpression.getINDEX(), 3);
+        return StrategyHelper.extractDataFromLine(indexLine, LineExpression.INDEX, 3);
     }
 
 }

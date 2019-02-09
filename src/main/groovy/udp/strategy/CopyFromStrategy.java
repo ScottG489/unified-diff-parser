@@ -8,13 +8,12 @@ import udp.parse.UnifiedDiff;
 public class CopyFromStrategy implements LineHandlingStrategy {
     @Override
     public void handle(String line, Object model) {
-        model = (UnifiedDiff) model;
         ((UnifiedDiff) model).setFileStatus(UnifiedDiff.FileStatus.Copied);
         ((UnifiedDiff) model).setFromFile(extractCopyFrom(line));
     }
 
     private static String extractCopyFrom(String copyFromLine) {
-        return StrategyHelper.extractDataFromLine(copyFromLine, LineExpression.getCOPY_FROM(), 1);
+        return StrategyHelper.extractDataFromLine(copyFromLine, LineExpression.COPY_FROM, 1);
     }
 
 }
