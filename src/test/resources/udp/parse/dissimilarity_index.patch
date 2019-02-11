@@ -1,0 +1,25 @@
+diff --git a/gradle.properties b/gradle.properties
+dissimilarity index 32%
+index a2fdf3d..c7acfeb 100644
+--- a/gradle.properties
++++ b/gradle.properties
+@@ -1,2 +1,17 @@
+-group = udp
+-version = 0.1.0-SNAPSHOT
++rroup = udp
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
++version = 0.1.0-SNAPSHOT
