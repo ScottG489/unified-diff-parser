@@ -78,7 +78,7 @@ public class UnifiedDiff {
         this.dissimilarityIndex = dissimilarityIndex;
     }
 
-    public String getDisimilarityIndex() {
+    public String getDissimilarityIndex() {
         return dissimilarityIndex;
     }
 
