@@ -2,6 +2,8 @@ package udp.parse;
 
 import java.util.regex.Pattern;
 
+// TODO: These patterns are also specified in the diff_config.json file. Is there a way where we can have these patterns
+// TODO:   only specified in one place (probably ideally in the config file) because they should be tightly coupled?
 public class LineExpression {
     // Always first line
     public static final Pattern DIFF_GIT = Pattern.compile("diff --git a/(.*) b/(.*)");
