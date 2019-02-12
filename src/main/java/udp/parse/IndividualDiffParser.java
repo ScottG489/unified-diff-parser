@@ -8,7 +8,7 @@ import rdglp.strategy.util.StrategyHelper;
 public class IndividualDiffParser {
     private UnifiedDiff unifiedDiff;
     private ParserNode firstNode;
-    
+
     public IndividualDiffParser(ParserNode firstNode) {
         this.firstNode = firstNode;
     }

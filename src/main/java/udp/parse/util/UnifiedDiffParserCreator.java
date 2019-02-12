@@ -11,7 +11,7 @@ public class UnifiedDiffParserCreator {
 
     UnifiedDiffParserCreator() {
         InputStream defaultDiffParserConfig = UnifiedDiffParserCreator.class.getResourceAsStream("diff_config.json");
-        defaultNodeGraph = ConfigParser.generateParserConfig(defaultDiffParserConfig ).get("diffGitNode");
+        defaultNodeGraph = ConfigParser.generateParserConfig(defaultDiffParserConfig).get("diffGitNode");
     }
 
     public UnifiedDiffParser create() {
