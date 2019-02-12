@@ -77,12 +77,21 @@
     ]
   },
   {
+    "name": "dissimilarityIndexNode",
+    "applicabilityPattern": "dissimilarity index (.*)",
+    "lineHandlingStrategy": "udp.strategy.DissimilarityIndexStrategy",
+    "possibleNextNodes": [
+      "indexNode"
+    ]
+  },
+  {
     "name": "newModeNode",
     "applicabilityPattern": "new mode (.*)",
     "lineHandlingStrategy": "udp.strategy.NewModeStrategy",
     "possibleNextNodes": [
       "indexNode",
-      "similarityIndexNode"
+      "similarityIndexNode",
+      "dissimilarityIndexNode"
     ]
   },
   {
@@ -118,7 +127,8 @@
       "deletedFileNode",
       "indexNode",
       "oldModeNode",
-      "similarityIndexNode"
+      "similarityIndexNode",
+      "dissimilarityIndexNode"
     ]
   }
 ]

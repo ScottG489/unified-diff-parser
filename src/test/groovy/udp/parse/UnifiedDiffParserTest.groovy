@@ -38,6 +38,7 @@ class UnifiedDiffParserTest extends Specification {
             unifiedDiff.getOldMode().equals(expectedUnifiedDiff.getOldMode())
             unifiedDiff.getMode().equals(expectedUnifiedDiff.getMode())
             unifiedDiff.getSimilarityIndex().equals(expectedUnifiedDiff.getSimilarityIndex())
+            unifiedDiff.getDissimilarityIndex().equals(expectedUnifiedDiff.getDissimilarityIndex())
 
         where:
             patchFileResourceName                     | numberOfDiffs | expectedUnifiedDiff
@@ -52,6 +53,7 @@ class UnifiedDiffParserTest extends Specification {
             'modified_mode_change.patch'              | 1             | getExpectedModifiedModeChangeUnifiedDiff()
             'added_binary_literal.patch'              | 1             | getExpectedAddedBinaryLiteralUnifiedDiff()
             'rename_binary_literal_mode_change.patch' | 1             | getExpectedRenameBinaryLiteralModeChangeUnifiedDiff()
+            'dissimilarity_index.patch'               | 1             | getExpectedDissimilarityIndexUnifiedDiff()
             'multi.patch'                             | 3             | getExpectedMultiUnifiedDiff()
     }
 
@@ -206,6 +208,21 @@ class UnifiedDiffParserTest extends Specification {
         expectedUnifiedDiff.setOldMode('100644')
         expectedUnifiedDiff.setMode('100755')
         expectedUnifiedDiff.setSimilarityIndex('99%')
+        return expectedUnifiedDiff
+    }
+
+    UnifiedDiff getExpectedDissimilarityIndexUnifiedDiff() {
+        UnifiedDiff expectedUnifiedDiff = new UnifiedDiff("")
+        expectedUnifiedDiff.setFromFile('gradle.properties')
+        expectedUnifiedDiff.setToFile('gradle.properties')
+        expectedUnifiedDiff.setFileStatus(FileStatus.Modified)
+        expectedUnifiedDiff.setIsBinary(false)
+        expectedUnifiedDiff.setChecksumBefore('a2fdf3d')
+        expectedUnifiedDiff.setChecksumAfter('c7acfeb')
+        expectedUnifiedDiff.setOldMode(null)
+        expectedUnifiedDiff.setMode('100644')
+        expectedUnifiedDiff.setSimilarityIndex(null)
+        expectedUnifiedDiff.setDissimilarityIndex('32%')
         return expectedUnifiedDiff
     }
 

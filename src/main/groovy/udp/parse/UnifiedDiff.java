@@ -73,7 +73,6 @@ public class UnifiedDiff {
         return similarityIndex;
     }
 
-    // TODO: Still need to find an example of this field
     public void setDissimilarityIndex(String dissimilarityIndex) {
         this.dissimilarityIndex = dissimilarityIndex;
     }
