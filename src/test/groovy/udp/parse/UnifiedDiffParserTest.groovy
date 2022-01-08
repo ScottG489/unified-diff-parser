@@ -241,7 +241,7 @@ class UnifiedDiffParserTest extends Specification {
     }
 
     private static UnifiedDiffParser getUdpFromResource() {
-        ConfigParser configParser = ConfigParser.getInstance()
+        ConfigParser configParser = new ConfigParser()
         // TODO: Bad hard coded values
         InputStream config = new FileInputStream("src/test/resources/udp/parse/diff_test.json")
         ParserNode firstNode = configParser.generateParserConfig(config).get('diffGitNode')
