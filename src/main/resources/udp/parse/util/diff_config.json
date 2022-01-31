@@ -69,7 +69,7 @@
   },
   {
     "name": "similarityIndexNode",
-    "applicabilityPattern": "similarity index (.*)",
+    "applicabilityPattern": "^similarity index (.*)",
     "lineHandlingStrategy": "udp.strategy.SimilarityIndexStrategy",
     "possibleNextNodes": [
       "copyFromNode",
@@ -78,7 +78,7 @@
   },
   {
     "name": "dissimilarityIndexNode",
-    "applicabilityPattern": "dissimilarity index (.*)",
+    "applicabilityPattern": "^dissimilarity index (.*)",
     "lineHandlingStrategy": "udp.strategy.DissimilarityIndexStrategy",
     "possibleNextNodes": [
       "copyFromNode",

@@ -14,7 +14,7 @@ public class LineExpression {
     public static final Pattern OLD_MODE = Pattern.compile("old mode (.*)");
     public static final Pattern NEW_MODE = Pattern.compile("new mode (.*)");
     // Displayed with copy and rename
-    public static final Pattern SIMILARITY_INDEX = Pattern.compile("similarity index (.*)");
+    public static final Pattern SIMILARITY_INDEX = Pattern.compile("^similarity index (.*)");
     // Both together. Exclusive from rename
     public static final Pattern COPY_FROM = Pattern.compile("copy from (.*)");
     public static final Pattern COPY_TO = Pattern.compile("copy to (.*)");
@@ -22,7 +22,7 @@ public class LineExpression {
     public static final Pattern RENAME_FROM = Pattern.compile("rename from (.*)");
     public static final Pattern RENAME_TO = Pattern.compile("rename to (.*)");
     // Not shown with copy or rename
-    public static final Pattern DISSIMILARITY_INDEX = Pattern.compile("dissimilarity index (.*)");
+    public static final Pattern DISSIMILARITY_INDEX = Pattern.compile("^dissimilarity index (.*)");
     /*
      * "The index line includes the SHA-1 checksum before and after the
      * change. The <mode> is included if the file mode does not change;
