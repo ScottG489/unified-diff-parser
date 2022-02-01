@@ -10,7 +10,7 @@ import java.io.InputStream;
 public class UnifiedDiffParserCreator {
     private final ParserNode defaultNodeGraph;
 
-    UnifiedDiffParserCreator() throws IOException {
+    public UnifiedDiffParserCreator() throws IOException {
         InputStream defaultDiffParserConfig = UnifiedDiffParserCreator.class.getResourceAsStream("diff_config.json");
         defaultNodeGraph = new ConfigParser().generateParserConfig(defaultDiffParserConfig).get("diffGitNode");
     }
