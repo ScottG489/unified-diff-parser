@@ -81,7 +81,9 @@
     "applicabilityPattern": "^dissimilarity index (.*)",
     "lineHandlingStrategy": "udp.strategy.DissimilarityIndexStrategy",
     "possibleNextNodes": [
-      "indexNode"
+      "indexNode",
+      "copyFromNode",
+      "renameFromNode"
     ]
   },
   {
