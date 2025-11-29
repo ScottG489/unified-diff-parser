@@ -24,4 +24,4 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Build and deploy
-      run: ./build.sh ${{ secrets.ID_RSA_CONTENTS_BASE64 }} ${{ secrets.OSSRH_USERNAME_BASE64 }} ${{ secrets.OSSRH_PASSWORD_BASE64 }}
+      run: ./build.sh ${{ secrets.ID_RSA_CONTENTS_BASE64 }} ${{ secrets.MAVENCENTRAL_USERNAME_BASE64 }} ${{ secrets.MAVENCENTRAL_PASSWORD_BASE64 }}

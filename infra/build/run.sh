@@ -6,7 +6,8 @@ source /home/build-user/build/build_functions.sh
 trap cleanup EXIT
 cleanup() {
   cd "$(git rev-parse --show-toplevel)"
-  rm secring.gpg || true
+  rm private.gpg || true
+  rm public.gpg || true
 }
 
 set +x

@@ -1,22 +1,19 @@
 plugins {
     id 'groovy'
+    id 'java-library'
     id 'idea'
     id 'jacoco'
-    id 'maven'
-    id 'signing'
+    id 'maven-publish'
+    id 'org.jreleaser' version '1.21.0'
 }
 
 repositories {
     mavenCentral()
-//    mavenLocal()
-    maven {
-        url "https://s01.oss.sonatype.org/content/repositories/snapshots/"
-    }
 }
 
 group = "io.github.scottg489"
 archivesBaseName = "unified-diff-parser"
-version = "0.5.2"
+version = "0.5.3-SNAPSHOT"
 
 
 dependencies {
@@ -30,71 +27,85 @@ dependencies {
 
 jacocoTestReport {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = true
+        html.required = true
     }
 }
 
-task sourceJar(type: Jar) {
-    from sourceSets.main.allGroovy
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
-task javadocJar(type: Jar) {
-    archiveClassifier.set('javadoc')
-    from javadoc
-}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'io.github.scottg489'
+            artifactId = 'unified-diff-parser'
 
-task sourcesJar(type: Jar) {
-    archiveClassifier.set('sources')
-    from sourceSets.main.allSource
-}
+            from components.java
 
-artifacts {
-    archives javadocJar, sourcesJar
-}
-
-signing {
-    sign configurations.archives
-}
-
-uploadArchives {
-    repositories {
-        mavenDeployer {
-            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
-
-            repository(url: "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/") {
-                authentication(userName: System.getenv("OSSRH_USERNAME"), password: System.getenv("OSSRH_PASSWORD"))
-            }
-
-            snapshotRepository(url: "https://s01.oss.sonatype.org/content/repositories/snapshots/") {
-                authentication(userName: System.getenv("OSSRH_USERNAME"), password: System.getenv("OSSRH_PASSWORD"))
-            }
-
-            pom.project {
-                name 'unified-diff-parser'
-                packaging 'jar'
-                description 'Extract metadata from unified diffs'
-                url 'https://github.com/ScottG489/unified-diff-parser'
-
-                scm {
-                    connection 'git@github.com:ScottG489/unified-diff-parser.git'
-                    developerConnection 'git@github.com:ScottG489/unified-diff-parser.git'
-                    url 'https://github.com/ScottG489/unified-diff-parser'
-                }
-
+            pom {
+                name = 'unified-diff-parser'
+                description = 'Extract metadata from unified diffs'
+                url = 'https://github.com/ScottG489/unified-diff-parser'
+                inceptionYear = '2016'
                 licenses {
                     license {
-                        name 'MIT License'
-                        url 'https://opensource.org/licenses/MIT'
+                        name = 'MIT License'
+                        url = 'https://opensource.org/licenses/MIT'
                     }
                 }
-
                 developers {
                     developer {
-                        id 'scottg489'
-                        name 'Scott Giminiani'
-                        email 'scottg489@gmail.com'
+                        id = 'scottg489'
+                        name = 'Scott Giminiani'
                     }
+                }
+                scm {
+                    connection = 'git@github.com:ScottG489/unified-diff-parser.git'
+                    developerConnection = 'git@github.com:ScottG489/unified-diff-parser.git'
+                    url = 'https://github.com/ScottG489/unified-diff-parser'
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url = layout.buildDirectory.dir('staging-deploy')
+        }
+    }
+}
+
+
+jreleaser {
+    signing {
+        active = 'ALWAYS'
+        armored = true
+        mode = 'FILE'
+        publicKey = 'public.gpg'
+        secretKey = 'private.gpg'
+        verify = true
+    }
+    deploy {
+        maven {
+            mavenCentral {
+                sonatype {
+                    active = 'ALWAYS'
+                    url = 'https://central.sonatype.com/api/v1/publisher'
+                    stagingRepository('build/staging-deploy')
+                }
+            }
+            nexus2 {
+                'snapshot-deploy' {
+                    active = 'SNAPSHOT'
+                    snapshotUrl = 'https://central.sonatype.com/repository/maven-snapshots/'
+                    applyMavenCentralRules = true
+                    snapshotSupported = true
+                    closeRepository = true
+                    releaseRepository = true
+                    stagingRepository('build/staging-deploy')
                 }
             }
         }

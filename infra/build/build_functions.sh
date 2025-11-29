@@ -22,32 +22,33 @@ build_test() {
   readonly ROOT_DIR=$(get_git_root_dir)
   cd "$ROOT_DIR"
 
-  ./gradlew --info build -x signArchives
+  ./gradlew --info clean build
 }
 
 upload_archives() {
   set +x
-  readonly GPG_KEY_PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16 ; echo -n '')
-  readonly OSSRH_USERNAME=$(echo -n "$1" | jq -r .OSSRH_USERNAME | base64 --decode)
-  readonly OSSRH_PASSWORD=$(echo -n "$1" | jq -r .OSSRH_PASSWORD | base64 --decode)
+  declare -rx JRELEASER_GPG_PASSPHRASE=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 16 ; echo -n '')
+  declare -rx JRELEASER_MAVENCENTRAL_USERNAME=$(echo -n "$1" | jq -r .MAVENCENTRAL_USERNAME | base64 --decode)
+  declare -rx JRELEASER_MAVENCENTRAL_PASSWORD=$(echo -n "$1" | jq -r .MAVENCENTRAL_PASSWORD | base64 --decode)
+
+  declare -rx JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_USERNAME=$JRELEASER_MAVENCENTRAL_USERNAME
+  declare -rx JRELEASER_DEPLOY_MAVEN_NEXUS2_SNAPSHOT_DEPLOY_PASSWORD=$JRELEASER_MAVENCENTRAL_PASSWORD
 
   gpg --batch --gen-key <<EOF
 Key-Type: 1
 Name-Real: Scott Giminiani
 Name-Email: scottg489@gmail.com
-Passphrase: $GPG_KEY_PASSWORD
+Passphrase: $JRELEASER_GPG_PASSPHRASE
 EOF
 
-  gpg --batch --pinentry-mode loopback --export-secret-keys --passphrase "$GPG_KEY_PASSWORD" -o secring.gpg
+  gpg --armor --batch --pinentry-mode loopback --export --passphrase "$JRELEASER_GPG_PASSPHRASE" -o public.gpg
+  gpg --armor --batch --pinentry-mode loopback --export-secret-keys --passphrase "$JRELEASER_GPG_PASSPHRASE" -o private.gpg
 
   readonly GPG_PUB_KEY=$(gpg --list-keys --with-colons | grep '^pub' | cut -d ':' -f 5)
-  readonly GPG_PUB_KEY_SHORT=$(echo -n "${GPG_PUB_KEY: -8}")
 
-  export OSSRH_USERNAME
-  export OSSRH_PASSWORD
-
-  ./gradlew uploadArchives -Psigning.secretKeyRingFile=secring.gpg -Psigning.password="$GPG_KEY_PASSWORD" -Psigning.keyId="$GPG_PUB_KEY_SHORT"
-  gpg --keyserver keys.openpgp.org --send-keys "$GPG_PUB_KEY"
-
+  gpg --keyserver keyserver.ubuntu.com --send-keys "$GPG_PUB_KEY"
   set -x
+  sleep 30  # Wait for key to be fully available on keyserver
+
+  ./gradlew publish jreleaserDeploy
 }
