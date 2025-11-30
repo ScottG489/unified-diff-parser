@@ -3,12 +3,10 @@ package udp.parse
 import rdglp.config.ConfigParser
 import rdglp.node.ParserNode
 import spock.lang.Specification
-import spock.lang.Unroll
 import udp.parse.UnifiedDiff.FileStatus
 
 // TODO: Use a template diff instead of static files?
 class UnifiedDiffParserTest extends Specification {
-    @Unroll
     def "UnifiedDiff generated from the file '#patchFileResourceName' should have the same fields as the expected UnifiedDiff"(
             String patchFileResourceName,
             int numberOfDiffs,
