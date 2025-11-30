@@ -17,7 +17,7 @@ version = "0.5.5-SNAPSHOT"
 
 
 dependencies {
-    implementation 'io.github.scottg489:regex-directed-graph-line-parser:0.3.4'
+    implementation 'io.github.scottg489:regex-directed-graph-line-parser:0.4.0'
 
     testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
