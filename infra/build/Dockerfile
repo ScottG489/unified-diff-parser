@@ -6,6 +6,7 @@ ENV HOME=/home/${BUILD_USER}
 RUN apt-get update && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
   git=1:2.43.0-1ubuntu7 \
+  openssh-client=1:9.6p1-3ubuntu13 \
   openjdk-11-jdk=11.0.29+7-1ubuntu1~24.04 \
   jq=1.7.1-3ubuntu0.24.04.1 \
   gnupg=2.4.4-2ubuntu17.3 \
