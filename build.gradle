@@ -17,8 +17,6 @@ version = "0.5.5-SNAPSHOT"
 
 
 dependencies {
-    implementation 'org.codehaus.groovy:groovy-all:3.0.25'
-
     implementation 'io.github.scottg489:regex-directed-graph-line-parser:0.3.4'
 
     testImplementation 'org.spockframework:spock-core:2.3-groovy-4.0'
