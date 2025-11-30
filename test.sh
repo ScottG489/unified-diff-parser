@@ -29,5 +29,5 @@ sudo chown -R "$(whoami)":"$(whoami)" .
 docker build infra/build -t udp-build-test && \
   docker run -it \
   --runtime=sysbox-runc \
-  --volume "$PWD:/home/build-user/build/unified-diff-parser" \
+  --volume "$PWD:/home/ubuntu/build/unified-diff-parser" \
   udp-build-test '{"RUN_TASK": "test", "GIT_BRANCH": "'"$GIT_BRANCH"'", "ID_RSA": "'"$ID_RSA_CONTENTS_BASE64"'", "MAVENCENTRAL_USERNAME": "'"$MAVENCENTRAL_USERNAME_BASE64"'", "MAVENCENTRAL_PASSWORD": "'"$MAVENCENTRAL_PASSWORD_BASE64"'"}'

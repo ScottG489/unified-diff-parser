@@ -12,9 +12,9 @@ setup_credentials() {
   readonly ID_RSA_CONTENTS=$(echo -n "$1" | jq -r .ID_RSA | base64 --decode)
   [[ -n $ID_RSA_CONTENTS ]]
 
-  printf -- "$ID_RSA_CONTENTS" >/home/build-user/.ssh/id_rsa
+  printf -- "$ID_RSA_CONTENTS" > $HOME/.ssh/id_rsa
 
-  chmod 400 /home/build-user/.ssh/id_rsa
+  chmod 400 $HOME/.ssh/id_rsa
 }
 
 build_test() {

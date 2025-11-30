@@ -1,21 +1,25 @@
-FROM ubuntu:20.04@sha256:8feb4d8ca5354def3d8fce243717141ce31e2c428701f6682bd2fafe15388214
+FROM ubuntu:24.04@sha256:c35e29c9450151419d9448b0fd75374fec4fff364a27f176fb458d472dfc9e54
+
+ARG BUILD_USER=ubuntu
+ENV HOME=/home/${BUILD_USER}
 
 RUN apt-get update && \
-  DEBIAN_FRONTEND=noninteractive apt-get install -y \
-  git \
-  openjdk-11-jdk \
-  jq \
-  gnupg
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  git=1:2.43.0-1ubuntu7 \
+  openjdk-11-jdk=11.0.29+7-1ubuntu1~24.04 \
+  jq=1.7.1-3ubuntu0.24.04.1 \
+  gnupg=2.4.4-2ubuntu17.3 \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN useradd -m -u 1000 -s /usr/bin/bash build-user
-USER build-user
+USER ${BUILD_USER}
 
-RUN mkdir /home/build-user/.ssh
-COPY known_hosts /home/build-user/.ssh/known_hosts
+RUN mkdir -p ${HOME}/.ssh \
+  && mkdir -p ${HOME}/build
 
-RUN mkdir -p /home/build-user/build
-COPY run.sh /home/build-user/build/run.sh
-COPY build_functions.sh /home/build-user/build/build_functions.sh
+COPY known_hosts ${HOME}/.ssh/known_hosts
+COPY run.sh ${HOME}/build/run.sh
+COPY build_functions.sh ${HOME}/build/build_functions.sh
 
-WORKDIR /home/build-user/build
+WORKDIR ${HOME}/build
 ENTRYPOINT ["./run.sh"]
