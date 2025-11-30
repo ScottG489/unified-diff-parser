@@ -22,7 +22,7 @@ dependencies {
     implementation 'io.github.scottg489:regex-directed-graph-line-parser:0.3.4'
 
     testImplementation 'org.spockframework:spock-core:1.0-groovy-2.4'
-    testImplementation 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.13.2'
 }
 
 jacocoTestReport {
