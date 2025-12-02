@@ -19,9 +19,7 @@ declare -r _GIT_REPO='git@github.com:ScottG489/unified-diff-parser.git'
 declare -r _RUN_TASK=$(jq -r .RUN_TASK <<< "$1")
 declare -r _GIT_BRANCH=$(jq -r .GIT_BRANCH <<< "$1")
 
-if [ ! -d "$_PROJECT_NAME" ]; then
-  git clone --branch $_GIT_BRANCH $_GIT_REPO
-fi
+[ -d "$_PROJECT_NAME" ] || git clone --branch $_GIT_BRANCH $_GIT_REPO
 cd $_PROJECT_NAME
 
 build_test
