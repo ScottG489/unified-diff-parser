@@ -1,7 +1,9 @@
 name: PR CI
 
 on:
-  pull_request:
+  push:
+    branches:
+      - 'renovate/**'
 
 jobs:
   build:
