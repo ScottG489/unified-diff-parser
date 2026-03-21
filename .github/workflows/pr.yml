@@ -2,8 +2,8 @@ name: PR CI
 
 on:
   push:
-    branches:
-      - 'renovate/**'
+    branches-ignore:
+      - master
 
 jobs:
   build:
