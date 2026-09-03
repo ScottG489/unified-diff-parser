@@ -9,7 +9,7 @@ RUN apt-get update && \
   openssh-client=1:9.6p1-3ubuntu13.18 \
   openjdk-17-jdk=17.0.19+10-1~24.04.2 \
   jq=1.7.1-3ubuntu0.24.04.2 \
-  gnupg=2.4.4-2ubuntu17.4 \
+  gnupg=2.4.4-2ubuntu17.6 \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
