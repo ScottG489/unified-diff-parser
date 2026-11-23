@@ -3,13 +3,23 @@ FROM ubuntu:24.04@sha256:4fbb8e6a8395de5a7550b33509421a2bafbc0aab6c06ba2cef9ebff
 ARG BUILD_USER=ubuntu
 ENV HOME=/home/${BUILD_USER}
 
-RUN apt-get update && \
+# Ubuntu packages come from this point-in-time snapshot of the archive instead of
+# per-package version pins, which stop building as soon as Ubuntu supersedes a version.
+# Renovate bumps it through the ubuntu-snapshot datasource in ScottG489/renovate-config.
+ARG UBUNTU_SNAPSHOT=20261120T050039Z
+RUN echo "APT::Snapshot \"${UBUNTU_SNAPSHOT}\";" > /etc/apt/apt.conf.d/50snapshot
+
+# snapshot.ubuntu.com is HTTPS-only and the base image has no CA bundle yet, so the
+# bootstrap skips TLS peer verification. apt still checks every index and package
+# against the Ubuntu archive key, same as the image's default http:// sources.
+RUN apt-get -o Acquire::https::Verify-Peer=false update && \
+  apt-get -o Acquire::https::Verify-Peer=false install -y --no-install-recommends ca-certificates && \
   DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-  git=1:2.43.0-1ubuntu7.3 \
-  openssh-client=1:9.6p1-3ubuntu13.18 \
-  openjdk-17-jdk=17.0.19+10-1~24.04.2 \
-  jq=1.7.1-3ubuntu0.24.04.2 \
-  gnupg=2.4.4-2ubuntu17.4 \
+  git \
+  openssh-client \
+  openjdk-17-jdk \
+  jq \
+  gnupg \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
